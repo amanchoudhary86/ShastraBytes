@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% block title %}Test | ShastraBytes{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Programming Skills Test</h3>
+                    <p class="mb-0">Python (10 questions) + C++ (10 questions) = 20 total questions</p>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('submit_test') }}" id="testForm">
+                        {% for i in range(questions|length) %}
+                        <div class="question-container mb-4 p-3 border rounded">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="question-number">Question {{ i + 1 }}</h5>
+                                <span class="badge badge-{% if i < 10 %}primary{% else %}success{% endif %}">
+                                    {% if i < 10 %}Python{% else %}C++{% endif %}
+                                </span>
+                            </div>
+                            
+                            <p class="question-text">{{ questions[i].question }}</p>
+                            
+                            {% if questions[i].code %}
+                            <div class="code-block bg-light p-3 rounded mb-3">
+                                <pre><code>{{ questions[i].code }}</code></pre>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="options">
+                                {% for option_key, option_value in questions[i].options.items() %}
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" 
+                                           name="q{{ i }}" 
+                                           value="{{ option_key }}" 
+                                           id="q{{ i }}_{{ option_key }}"
+                                           required>
+                                    <label class="form-check-label" for="q{{ i }}_{{ option_key }}">
+                                        <strong>{{ option_key.upper() }}:</strong> {{ option_value }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg" onclick="return confirmSubmit()">
+                                Submit Test
+                            </button>
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary btn-lg ms-3">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmSubmit() {
+    return confirm('Are you sure you want to submit the test? This action cannot be undone.');
+}
+
+// Auto-save progress to session storage (optional)
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('testForm');
+    const inputs = form.querySelectorAll('input[type="radio"]');
+    
+    // Load saved answers
+    inputs.forEach(input => {
+        const saved = sessionStorage.getItem(input.name);
+        if (saved === input.value) {
+            input.checked = true;
+        }
+    });
+    
+    // Save answers on change
+    inputs.forEach(input => {
+        input.addEventListener('change', function() {
+            sessionStorage.setItem(this.name, this.value);
+        });
+    });
+    
+    // Clear session storage on submit
+    form.addEventListener('submit', function() {
+        sessionStorage.clear();
+    });
+});
+</script>
+
+<style>
+.question-container {
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.question-container:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.question-number {
+    color: #495057;
+    font-weight: 600;
+}
+
+.question-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #212529;
+}
+
+.code-block {
+    border-left: 4px solid #007bff;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+}
+
+.code-block pre {
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+.badge {
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+}
+
+.form-check-label {
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.form-check-input:checked + .form-check-label {
+    color: #007bff;
+    font-weight: 500;
+}
+
+.btn-lg {
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %} {% block title %}Home - ShastraBytes{% endblock %} {%
+block content %} {% block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/home.css') }}"
+/>
+{% endblock %}
+
+<div class="text-center py-5">
+  <h1 class="display-4">Welcome to ShastraBytes</h1>
+  <p class="lead mt-3">
+    Empowering learners and creators through technology, community, and
+    innovation.
+  </p>
+  <div class="mt-4">
+    <a href="{{ url_for('signup') }}" class="btn btn-primary btn-lg me-2"
+      >Get Started</a
+    >
+    <a href="{{ url_for('about') }}" class="btn btn-outline-secondary btn-lg"
+      >Learn More</a
+    >
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+{% block title %}Test Results | ShastraBytes{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white text-center">
+                    <h3 class="mb-0">Test Results</h3>
+                    <p class="mb-0">Congratulations, {{ user_name }}!</p>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center mb-4">
+                        <div class="col-md-12">
+                            <div class="result-circle mx-auto mb-3">
+                                <div class="percentage">{{ "%.1f"|format(percentage) }}%</div>
+                                <div class="total-score">{{ total_score }}/20</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="score-card python-card">
+                                <h5>Python Score</h5>
+                                <div class="score">{{ python_score }}/10</div>
+                                <div class="percentage">{{ "%.1f"|format((python_score/10)*100) }}%</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="score-card cpp-card">
+                                <h5>C++ Score</h5>
+                                <div class="score">{{ cpp_score }}/10</div>
+                                <div class="percentage">{{ "%.1f"|format((cpp_score/10)*100) }}%</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="performance-analysis mb-4">
+                        <h5>Performance Analysis</h5>
+                        <div class="analysis-item">
+                            <strong>Overall Performance:</strong>
+                            {% if percentage >= 80 %}
+                                <span class="text-success">Excellent! You have a strong grasp of both languages.</span>
+                            {% elif percentage >= 60 %}
+                                <span class="text-warning">Good! You're doing well, but there's room for improvement.</span>
+                            {% else %}
+                                <span class="text-danger">Keep practicing! Focus on strengthening your fundamentals.</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="analysis-item mt-2">
+                            <strong>Python Skills:</strong>
+                            {% if python_score >= 8 %}
+                                <span class="text-success">Excellent Python knowledge!</span>
+                            {% elif python_score >= 6 %}
+                                <span class="text-warning">Good Python understanding, keep improving!</span>
+                            {% else %}
+                                <span class="text-danger">Focus more on Python fundamentals.</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="analysis-item mt-2">
+                            <strong>C++ Skills:</strong>
+                            {% if cpp_score >= 8 %}
+                                <span class="text-success">Excellent C++ knowledge!</span>
+                            {% elif cpp_score >= 6 %}
+                                <span class="text-warning">Good C++ understanding, keep improving!</span>
+                            {% else %}
+                                <span class="text-danger">Focus more on C++ fundamentals.</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="recommendations mb-4">
+                        <h5>Recommendations</h5>
+                        <ul class="list-unstyled">
+                            {% if python_score < 7 %}
+                                <li><i class="fas fa-lightbulb text-warning"></i> Practice Python data structures and algorithms</li>
+                            {% endif %}
+                            {% if cpp_score < 7 %}
+                                <li><i class="fas fa-lightbulb text-warning"></i> Review C++ object-oriented programming concepts</li>
+                            {% endif %}
+                            {% if percentage < 70 %}
+                                <li><i class="fas fa-book text-info"></i> Consider taking additional courses in your weaker areas</li>
+                                <li><i class="fas fa-code text-info"></i> Practice more coding problems daily</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    
+                    <div class="text-center">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg me-3">
+                            Back to Dashboard
+                        </a>
+                        <a href="{{ url_for('test') }}" class="btn btn-outline-primary btn-lg">
+                            Take Test Again
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.result-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #007bff, #28a745);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    position: relative;
+}
+
+.percentage {
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.total-score {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.score-card {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border: 2px solid #dee2e6;
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.score-card:hover {
+    transform: translateY(-5px);
+}
+
+.python-card {
+    border-color: #007bff;
+}
+
+.cpp-card {
+    border-color: #28a745;
+}
+
+.score-card h5 {
+    color: #495057;
+    margin-bottom: 1rem;
+}
+
+.score-card .score {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #212529;
+}
+
+.score-card .percentage {
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin-top: 0.5rem;
+}
+
+.performance-analysis {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+    border-left: 4px solid #007bff;
+}
+
+.analysis-item {
+    margin-bottom: 0.5rem;
+}
+
+.recommendations {
+    background-color: #fff3cd;
+    border-radius: 10px;
+    padding: 1.5rem;
+    border-left: 4px solid #ffc107;
+}
+
+.recommendations ul li {
+    margin-bottom: 0.5rem;
+    padding-left: 1.5rem;
+}
+
+.recommendations ul li i {
+    margin-right: 0.5rem;
+}
+
+.btn-lg {
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .result-circle {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .percentage {
+        font-size: 1.5rem;
+    }
+    
+    .score-card .score {
+        font-size: 1.5rem;
+    }
+}
+</style>
+{% endblock %}

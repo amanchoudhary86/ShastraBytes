@@ -1,0 +1,24 @@
+body.day-mode .dashboard {
+    background-color: #f8f9fa;
+    color: #333;
+}
+body.night-mode .dashboard {
+    background-color: #1c1c1e;
+    color: #eee;
+}
+
+.dashboard-heading {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+.dashboard-subtitle {
+    font-size: 1.2rem;
+    color: #6c757d;
+}
+
+.card-feature {
+    transition: transform 0.3s ease;
+}
+.card-feature:hover {
+    transform: translateY(-5px);
+}

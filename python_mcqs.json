@@ -1,0 +1,502 @@
+[
+  {
+    "question": "What is the time complexity of searching for an element in a Python dictionary?",
+    "options": {
+      "a": "O(1) average case, O(n) worst case",
+      "b": "O(log n) always",
+      "c": "O(n) always",
+      "d": "O(1) always"
+    },
+    "answer": "a"
+  },
+  {
+    "question": "Which Python data structure would be most efficient for implementing a stack?",
+    "options": {
+      "a": "list with append() and pop()",
+      "b": "collections.deque with append() and pop()",
+      "c": "list with insert(0) and pop(0)",
+      "d": "Both a and b are equally efficient"
+    },
+    "answer": "d"
+  },
+  {
+    "question": "What happens when you try to access a key that doesn't exist in a Python dictionary?",
+    "options": {
+      "a": "Returns None",
+      "b": "Returns empty string",
+      "c": "Raises KeyError",
+      "d": "Returns False"
+    },
+    "answer": "c"
+  },
+  {
+    "question": "In Python, which of the following has the best time complexity for checking membership?",
+    "options": {
+      "a": "list",
+      "b": "tuple",
+      "c": "set",
+      "d": "string"
+    },
+    "answer": "c"
+  },
+  {
+    "question": "What is the output of `list(range(5))[-1::-2]`?",
+    "options": {
+      "a": "[4, 2, 0]",
+      "b": "[4, 3, 2, 1, 0]",
+      "c": "[0, 2, 4]",
+      "d": "[4, 2]"
+    },
+    "answer": "a"
+  },
+  {
+    "question": "What is the purpose of the `__init__` method in Python classes?",
+    "options": {
+      "a": "To initialize class variables",
+      "b": "To create class instances",
+      "c": "To initialize instance variables when an object is created",
+      "d": "To define class methods"
+    },
+    "answer": "c"
+  },
+  {
+    "question": "Which of the following correctly demonstrates method overriding in Python?",
+    "options": {
+      "a": "Defining multiple methods with the same name in one class",
+      "b": "Defining a method in a child class with the same name as in parent class",
+      "c": "Using the @override decorator",
+      "d": "Creating static methods"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "What does the `super()` function do in Python?",
+    "options": {
+      "a": "Creates a superclass",
+      "b": "Provides access to methods in a parent class",
+      "c": "Makes a method static",
+      "d": "Creates multiple inheritance"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "How does Python implement private variables?",
+    "options": {
+      "a": "Using the private keyword",
+      "b": "Using single underscore prefix (_variable)",
+      "c": "Using double underscore prefix (__variable) for name mangling",
+      "d": "Python doesn't support private variables"
+    },
+    "answer": "c"
+  },
+  {
+    "question": "What is the difference between `@staticmethod` and `@classmethod` decorators?",
+    "options": {
+      "a": "No difference, they are aliases",
+      "b": "staticmethod doesn't receive any implicit first argument, classmethod receives cls",
+      "c": "staticmethod is for private methods, classmethod is for public methods",
+      "d": "staticmethod can only be called on instances, classmethod only on classes"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "What is the Global Interpreter Lock (GIL) in Python?",
+    "options": {
+      "a": "A lock that prevents multiple threads from executing Python bytecode simultaneously",
+      "b": "A security feature that locks global variables",
+      "c": "A memory management technique",
+      "d": "A debugging tool"
+    },
+    "answer": "a"
+  },
+  {
+    "question": "What is the difference between `copy.copy()` and `copy.deepcopy()`?",
+    "options": {
+      "a": "No difference",
+      "b": "copy() creates a shallow copy, deepcopy() creates a deep copy",
+      "c": "copy() is faster, deepcopy() is more secure",
+      "d": "copy() works on lists, deepcopy() works on dictionaries"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "Which of the following objects are immutable in Python?",
+    "options": {
+      "a": "list, dict, set",
+      "b": "tuple, str, frozenset",
+      "c": "list, tuple, str",
+      "d": "dict, set, frozenset"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "What happens when you assign one list to another in Python (list2 = list1)?",
+    "options": {
+      "a": "Creates a new independent copy",
+      "b": "Creates a reference to the same object",
+      "c": "Creates a shallow copy",
+      "d": "Raises an error"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "How does Python's garbage collection work?",
+    "options": {
+      "a": "Manual memory management only",
+      "b": "Reference counting with cycle detection",
+      "c": "Mark and sweep algorithm only",
+      "d": "Automatic memory allocation without cleanup"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "What is the output of `list(map(lambda x: x**2, filter(lambda x: x%2==0, [1,2,3,4,5])))`?",
+    "options": {
+      "a": "[1, 4, 9, 16, 25]",
+      "b": "[4, 16]",
+      "c": "[2, 4]",
+      "d": "[1, 9, 25]"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "What is a closure in Python?",
+    "options": {
+      "a": "A function that closes files",
+      "b": "A nested function that captures variables from its enclosing scope",
+      "c": "A way to close loops",
+      "d": "A type of exception handling"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "What is the difference between a generator and a list comprehension?",
+    "options": {
+      "a": "No difference",
+      "b": "Generators are lazy evaluated, list comprehensions create the entire list in memory",
+      "c": "Generators are faster, list comprehensions are more readable",
+      "d": "Generators work with numbers, list comprehensions work with strings"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "What does the `yield` keyword do in Python?",
+    "options": {
+      "a": "Returns a value and ends function execution",
+      "b": "Returns a value but preserves function state for next call",
+      "c": "Creates a list",
+      "d": "Handles exceptions"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "How do you create a decorator that takes arguments?",
+    "options": {
+      "a": "Use nested functions with three levels",
+      "b": "Use lambda functions",
+      "c": "Use the @property decorator",
+      "d": "Decorators cannot take arguments"
+    },
+    "answer": "a"
+  },
+  {
+    "question": "What is the correct order of exception handling blocks?",
+    "options": {
+      "a": "try, except, else, finally",
+      "b": "try, finally, except, else",
+      "c": "except, try, else, finally",
+      "d": "try, except, finally, else"
+    },
+    "answer": "a"
+  },
+  {
+    "question": "What happens if an exception occurs in the `finally` block?",
+    "options": {
+      "a": "It is ignored",
+      "b": "It overwrites any previous exception",
+      "c": "It gets logged automatically",
+      "d": "It causes a syntax error"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "How do you create a custom exception in Python?",
+    "options": {
+      "a": "Define a class that inherits from Exception",
+      "b": "Use the @exception decorator",
+      "c": "Define a function with 'exception' in its name",
+      "d": "Use the raise keyword only"
+    },
+    "answer": "a"
+  },
+  {
+    "question": "What is the purpose of the `else` clause in a try-except block?",
+    "options": {
+      "a": "Executes when an exception occurs",
+      "b": "Executes when no exception occurs",
+      "c": "Same as finally clause",
+      "d": "Used for cleanup code"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "Which built-in function can help you debug by examining object attributes?",
+    "options": {
+      "a": "debug()",
+      "b": "inspect()",
+      "c": "dir()",
+      "d": "help()"
+    },
+    "answer": "c"
+  },
+  {
+    "question": "What is the main limitation of Python's threading due to the GIL?",
+    "options": {
+      "a": "Threads cannot be created",
+      "b": "Only one thread can execute Python bytecode at a time",
+      "c": "Threads are slower than processes",
+      "d": "Memory leaks occur"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "When should you use `multiprocessing` instead of `threading` in Python?",
+    "options": {
+      "a": "For I/O bound tasks",
+      "b": "For CPU intensive tasks",
+      "c": "For network operations",
+      "d": "For file operations"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "What does `asyncio` provide in Python?",
+    "options": {
+      "a": "Multithreading capabilities",
+      "b": "Asynchronous programming support",
+      "c": "Parallel processing",
+      "d": "Memory management"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "What is the difference between `concurrent.futures.ThreadPoolExecutor` and `ProcessPoolExecutor`?",
+    "options": {
+      "a": "No difference",
+      "b": "ThreadPoolExecutor uses threads, ProcessPoolExecutor uses processes",
+      "c": "ThreadPoolExecutor is faster",
+      "d": "ProcessPoolExecutor is deprecated"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "What keyword is used to define an asynchronous function in Python?",
+    "options": {
+      "a": "async",
+      "b": "await",
+      "c": "asyncio",
+      "d": "concurrent"
+    },
+    "answer": "a"
+  },
+  {
+    "question": "What does `collections.defaultdict` do?",
+    "options": {
+      "a": "Creates a dictionary with default values",
+      "b": "Creates a dictionary that returns a default value for missing keys",
+      "c": "Creates a sorted dictionary",
+      "d": "Creates a thread-safe dictionary"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "Which `itertools` function would you use to create combinations of elements?",
+    "options": {
+      "a": "itertools.permutations()",
+      "b": "itertools.combinations()",
+      "c": "itertools.product()",
+      "d": "itertools.chain()"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "What is the purpose of `collections.Counter`?",
+    "options": {
+      "a": "To count execution time",
+      "b": "To count hashable objects",
+      "c": "To create numerical counters",
+      "d": "To count function calls"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "How do you create a double-ended queue in Python?",
+    "options": {
+      "a": "collections.deque()",
+      "b": "collections.queue()",
+      "c": "collections.stack()",
+      "d": "list()"
+    },
+    "answer": "a"
+  },
+  {
+    "question": "What does `itertools.cycle()` do?",
+    "options": {
+      "a": "Creates infinite loops",
+      "b": "Cycles through an iterable infinitely",
+      "c": "Measures execution cycles",
+      "d": "Creates circular references"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "What is the time complexity of the `in` operator for strings in Python?",
+    "options": {
+      "a": "O(1)",
+      "b": "O(log n)",
+      "c": "O(n)",
+      "d": "O(n²)"
+    },
+    "answer": "c"
+  },
+  {
+    "question": "What does the regex pattern `r'\\d+'` match?",
+    "options": {
+      "a": "One or more digits",
+      "b": "Exactly one digit",
+      "c": "Zero or more digits",
+      "d": "Any character except digits"
+    },
+    "answer": "a"
+  },
+  {
+    "question": "Which string method would you use to split a string by multiple delimiters?",
+    "options": {
+      "a": "split() with multiple arguments",
+      "b": "Use regex with re.split()",
+      "c": "partition() method",
+      "d": "replace() method"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "What is the difference between `str.find()` and `str.index()`?",
+    "options": {
+      "a": "No difference",
+      "b": "find() returns -1 if not found, index() raises ValueError",
+      "c": "find() is case-sensitive, index() is not",
+      "d": "find() works with substrings, index() works with characters"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "How do you make a string comparison case-insensitive?",
+    "options": {
+      "a": "Use the ignore_case parameter",
+      "b": "Convert both strings to lowercase/uppercase before comparison",
+      "c": "Use the casefold() method",
+      "d": "Both b and c are correct"
+    },
+    "answer": "d"
+  },
+  {
+    "question": "What is the advantage of using `with` statement for file operations?",
+    "options": {
+      "a": "Faster file access",
+      "b": "Automatic file closing even if exceptions occur",
+      "c": "Better error messages",
+      "d": "Compressed file storage"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "How do you read a CSV file in Python without external libraries?",
+    "options": {
+      "a": "Use open() and split(',')",
+      "b": "Use the csv module",
+      "c": "Use json.load()",
+      "d": "Both a and b work, but b is preferred"
+    },
+    "answer": "d"
+  },
+  {
+    "question": "What does the `'r+'` mode do when opening a file?",
+    "options": {
+      "a": "Read only",
+      "b": "Write only",
+      "c": "Read and write (file must exist)",
+      "d": "Create new file for reading and writing"
+    },
+    "answer": "c"
+  },
+  {
+    "question": "How do you handle different text encodings when reading files?",
+    "options": {
+      "a": "Python handles it automatically",
+      "b": "Specify encoding parameter in open()",
+      "c": "Use the codecs module",
+      "d": "Both b and c are correct"
+    },
+    "answer": "d"
+  },
+  {
+    "question": "What is the difference between `json.loads()` and `json.load()`?",
+    "options": {
+      "a": "No difference",
+      "b": "loads() works with strings, load() works with file objects",
+      "c": "loads() is faster",
+      "d": "load() is deprecated"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "What is monkey patching in Python?",
+    "options": {
+      "a": "A debugging technique",
+      "b": "Dynamically modifying classes or modules at runtime",
+      "c": "A type of inheritance",
+      "d": "Error handling method"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "What does the `__slots__` attribute do in a Python class?",
+    "options": {
+      "a": "Creates private variables",
+      "b": "Restricts the attributes that can be set and saves memory",
+      "c": "Defines method signatures",
+      "d": "Creates static methods"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "What is the purpose of `*args` and `**kwargs` in function definitions?",
+    "options": {
+      "a": "Required parameters",
+      "b": "Variable-length argument lists",
+      "c": "Default parameter values",
+      "d": "Type hints"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "What does the `@property` decorator do?",
+    "options": {
+      "a": "Makes a method static",
+      "b": "Allows methods to be accessed like attributes",
+      "c": "Creates private methods",
+      "d": "Handles exceptions automatically"
+    },
+    "answer": "b"
+  },
+  {
+    "question": "What is metaclass in Python?",
+    "options": {
+      "a": "A class for metadata",
+      "b": "A class whose instances are classes",
+      "c": "A parent class",
+      "d": "An abstract class"
+    },
+    "answer": "b"
+  }
+]

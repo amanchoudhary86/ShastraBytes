@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}ShastraBytes{% endblock %}</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/base.css') }}"
+    />
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body class="light-mode">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('home') }}">ShastraBytes</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('about') }}">About Us</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="guidelines.html"
+                >Community Guidelines</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="howitworks.html">How It Works</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="contact.html">Contact Us</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="copyright.html">Copyright</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="terms.html">Terms & Conditions</a>
+            </li>
+          </ul>
+        </div>
+          <div class="ms-auto d-flex align-items-center">
+            {% if session.get('user_id') %}
+            <div class="dropdown">
+              <a
+                class="btn btn-secondary dropdown-toggle"
+                href="#"
+                id="userDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+              >
+                <img
+                  src="https://i.pinimg.com/originals/59/af/9c/59af9cd100daf9aa154cc753dd58316d.jpg"
+                  class="rounded-circle me-2"
+                  alt="avatar"
+                />
+                {{ session.get('user_name') }}
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('dashboard') }}"
+                    >Dashboard</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('dashboard') }}"
+                    >My Profile</a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('logout') }}"
+                    >Logout</a
+                  >
+                </li>
+              </ul>
+            </div>
+            {% else %}
+            <a class="btn btn-outline-light me-2" href="{{ url_for('login') }}"
+              >Login</a
+            >
+            <a class="btn btn-primary" href="{{ url_for('signup') }}"
+              >Sign Up</a
+            >
+            {% endif %}
+            <button class="btn btn-outline-light ms-3" onclick="toggleTheme()">
+              🌗
+            </button>
+          </div>
+        
+      </div>
+    </nav>
+
+    <main class="container mt-4">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% for
+      category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %} {% endwith %} {% block content %}{% endblock %}
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/toggle.js') }}"></script>
+  </body>
+</html>
