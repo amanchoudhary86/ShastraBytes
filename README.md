@@ -1,4 +1,4 @@
-# AI HR 
+# ShastraByte 
 
 ### Setup
 ```bash
