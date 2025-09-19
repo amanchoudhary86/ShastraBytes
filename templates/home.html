@@ -1,11 +1,7 @@
-{% extends 'base.html' %} {% block title %}Home - ShastraBytes{% endblock %} {%
-block content %} {% block extra_css %}
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/home.css') }}"
-/>
-{% endblock %}
+{% extends 'base.html' %} 
+{% block title %}Home - ShastraBytes{% endblock %} 
 
+{% block content %}
 <div class="text-center py-5">
   <h1 class="display-4">Welcome to ShastraBytes</h1>
   <p class="lead mt-3">
@@ -13,12 +9,8 @@ block content %} {% block extra_css %}
     innovation.
   </p>
   <div class="mt-4">
-    <a href="{{ url_for('signup') }}" class="btn btn-primary btn-lg me-2"
-      >Get Started</a
-    >
-    <a href="{{ url_for('about') }}" class="btn btn-outline-secondary btn-lg"
-      >Learn More</a
-    >
+    <a href="{{ url_for('signup') }}" class="btn btn-3d btn-primary-3d">Get Started</a>
+    <a href="{{ url_for('about') }}" class="btn btn-3d btn-success-3d">Learn More</a>
   </div>
 </div>
 {% endblock %}

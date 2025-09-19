@@ -7,7 +7,8 @@
             "c": "Classes support inheritance, structs don't",
             "d": "Structs can't have constructors"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 1
     },
     {
         "question": "What happens when you don't provide a destructor for a class that manages dynamic memory?",
@@ -17,7 +18,8 @@
             "c": "Compilation error",
             "d": "Runtime exception is thrown"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 2
     },
     {
         "question": "Which of the following correctly demonstrates virtual function usage?",
@@ -27,7 +29,8 @@
             "c": "Virtual functions are faster than non-virtual functions",
             "d": "Virtual functions can't be overridden"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 2
     },
     {
         "question": "What is the diamond problem in multiple inheritance?",
@@ -37,7 +40,8 @@
             "c": "Performance degradation",
             "d": "Compilation error with diamond-shaped code"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 3
     },
     {
         "question": "What does the 'explicit' keyword do in C++?",
@@ -47,7 +51,8 @@
             "c": "Makes variables constant",
             "d": "Enables virtual inheritance"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 2
     },
     {
         "question": "What is RAII (Resource Acquisition Is Initialization)?",
@@ -57,7 +62,8 @@
             "c": "A debugging methodology",
             "d": "A compiler optimization"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 3
     },
     {
         "question": "What happens to stack-allocated objects when they go out of scope?",
@@ -67,7 +73,8 @@
             "c": "They cause memory leak",
             "d": "They are moved to heap memory"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 1
     },
     {
         "question": "Which statement about new/delete vs malloc/free is correct?",
@@ -77,7 +84,8 @@
             "c": "malloc/free are faster than new/delete",
             "d": "new/delete work only with classes, malloc/free work only with primitive types"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 2
     },
     {
         "question": "What is a memory leak?",
@@ -87,7 +95,8 @@
             "c": "When variables go out of scope",
             "d": "When virtual functions are used"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 1
     },
     {
         "question": "What is the difference between shallow copy and deep copy?",
@@ -97,7 +106,8 @@
             "c": "Shallow copy is faster, deep copy is safer",
             "d": "Shallow copy works with primitives, deep copy works with objects"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 2
     },
     {
         "question": "What does the 'auto' keyword do in modern C++?",
@@ -107,7 +117,8 @@
             "c": "Makes functions virtual automatically",
             "d": "Enables automatic memory management"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 1
     },
     {
         "question": "What is an rvalue reference (&&) used for?",
@@ -117,7 +128,8 @@
             "c": "Declaring constant references",
             "d": "Creating bidirectional references"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 3
     },
     {
         "question": "What is the purpose of std::move?",
@@ -127,7 +139,8 @@
             "c": "Swaps two objects",
             "d": "Copies objects efficiently"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 2
     },
     {
         "question": "What does a lambda expression capture by value vs by reference?",
@@ -137,7 +150,8 @@
             "c": "By value is slower, by reference is faster",
             "d": "By value works only with primitives"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 2
     },
     {
         "question": "What is the nullptr keyword advantage over NULL?",
@@ -147,7 +161,8 @@
             "c": "nullptr takes less memory",
             "d": "No significant advantage"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 2
     },
     {
         "question": "When should you use std::unique_ptr?",
@@ -157,7 +172,8 @@
             "c": "When you need circular references",
             "d": "When you need manual memory management"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 2
     },
     {
         "question": "What is the main difference between std::shared_ptr and std::weak_ptr?",
@@ -167,7 +183,8 @@
             "c": "shared_ptr can be null, weak_ptr cannot",
             "d": "No significant difference"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 3
     },
     {
         "question": "How do you create a std::shared_ptr correctly?",
@@ -177,7 +194,8 @@
             "c": "Both a and b work, but b is preferred",
             "d": "Only a is correct"
         },
-        "answer": "c"
+        "answer": "c",
+        "difficulty": 2
     },
     {
         "question": "What happens when the last std::shared_ptr to an object is destroyed?",
@@ -187,7 +205,8 @@
             "c": "Compilation error occurs",
             "d": "Memory leak happens"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 2
     },
     {
         "question": "What problem does std::weak_ptr solve?",
@@ -197,7 +216,8 @@
             "c": "Performance issues with pointers",
             "d": "Thread safety issues"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 3
     },
     {
         "question": "What is template specialization?",
@@ -207,7 +227,8 @@
             "c": "Creating virtual templates",
             "d": "Optimizing template compilation"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 3
     },
     {
         "question": "What does SFINAE stand for?",
@@ -217,7 +238,8 @@
             "c": "Standard Function Interface And Exception",
             "d": "Specialized Function Implementation And Execution"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 3
     },
     {
         "question": "What is the difference between template<typename T> and template<class T>?",
@@ -227,7 +249,8 @@
             "c": "class is deprecated in modern C++",
             "d": "typename is faster than class"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 1
     },
     {
         "question": "What are variadic templates?",
@@ -237,7 +260,8 @@
             "c": "Templates with multiple inheritance",
             "d": "Templates with variable types only"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 3
     },
     {
         "question": "What is template argument deduction?",
@@ -247,7 +271,8 @@
             "c": "Runtime type checking for templates",
             "d": "Template optimization technique"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 2
     },
     {
         "question": "What is the time complexity of insertion at the end of std::vector?",
@@ -257,7 +282,8 @@
             "c": "O(1) amortized, O(n) worst case",
             "d": "O(log n)"
         },
-        "answer": "c"
+        "answer": "c",
+        "difficulty": 2
     },
     {
         "question": "When should you use std::deque instead of std::vector?",
@@ -267,7 +293,8 @@
             "c": "When you need sorting",
             "d": "std::vector is always better"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 2
     },
     {
         "question": "What is the difference between std::map and std::unordered_map?",
@@ -277,7 +304,8 @@
             "c": "map is faster than unordered_map",
             "d": "unordered_map doesn't allow duplicates"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 2
     },
     {
         "question": "What does std::iterator_traits provide?",
@@ -287,7 +315,8 @@
             "c": "Runtime iterator validation",
             "d": "Automatic iterator increment"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 3
     },
     {
         "question": "Which STL algorithm would you use to find an element in a sorted range?",
@@ -297,7 +326,8 @@
             "c": "std::search",
             "d": "std::locate"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 2
     },
     {
         "question": "What is a race condition?",
@@ -307,7 +337,8 @@
             "c": "When one thread finishes before another",
             "d": "When threads are created in wrong order"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 2
     },
     {
         "question": "What is the difference between std::mutex and std::recursive_mutex?",
@@ -317,7 +348,8 @@
             "c": "mutex is faster than recursive_mutex",
             "d": "recursive_mutex is thread-safe, mutex is not"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 3
     },
     {
         "question": "What does std::atomic provide?",
@@ -327,7 +359,8 @@
             "c": "Automatic variable initialization",
             "d": "Memory allocation optimization"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 3
     },
     {
         "question": "When should you use std::async?",
@@ -337,7 +370,8 @@
             "c": "Only for I/O operations",
             "d": "Only for CPU-intensive tasks"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 2
     },
     {
         "question": "What is a deadlock in multithreading?",
@@ -347,7 +381,8 @@
             "c": "When threads run too slowly",
             "d": "When memory runs out"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 2
     },
     {
         "question": "What are the three levels of exception safety?",
@@ -357,7 +392,8 @@
             "c": "Try, Catch, Finally",
             "d": "Stack, Heap, Global"
         },
-        "answer": "a"
+        "answer": "a",
+        "difficulty": 3
     },
     {
         "question": "What does 'exception neutral' code mean?",
@@ -367,7 +403,8 @@
             "c": "Code that catches all exceptions",
             "d": "Code that converts exceptions to error codes"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 3
     },
     {
         "question": "What happens if an exception is thrown during stack unwinding?",
@@ -377,7 +414,8 @@
             "c": "The new exception replaces the old one",
             "d": "Exceptions are queued for later handling"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 3
     },
     {
         "question": "What is the purpose of RAII in exception handling?",
@@ -387,7 +425,8 @@
             "c": "To prevent exceptions from being thrown",
             "d": "To improve exception handling performance"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 2
     },
     {
         "question": "What does the noexcept specifier do?",
@@ -397,7 +436,8 @@
             "c": "Automatically catches exceptions",
             "d": "Makes functions faster"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 2
     },
     {
         "question": "What is Return Value Optimization (RVO)?",
@@ -407,7 +447,8 @@
             "c": "A debugging feature",
             "d": "A runtime optimization"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 3
     },
     {
         "question": "What is the purpose of const correctness?",
@@ -417,7 +458,8 @@
             "c": "Preventing compilation errors",
             "d": "Enabling compiler optimizations only"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 2
     },
     {
         "question": "What is template metaprogramming?",
@@ -427,7 +469,8 @@
             "c": "Debugging template code",
             "d": "Optimizing template performance"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 3
     },
     {
         "question": "What does the volatile keyword indicate?",
@@ -437,7 +480,8 @@
             "c": "Variable is temporary",
             "d": "Variable is thread-safe"
         },
-        "answer": "a"
+        "answer": "a",
+        "difficulty": 2
     },
     {
         "question": "What is the purpose of inline functions?",
@@ -447,7 +491,8 @@
             "c": "Making functions faster automatically",
             "d": "Enabling virtual dispatch"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 1
     },
     {
         "question": "What is the Singleton pattern and why might it be problematic?",
@@ -457,7 +502,8 @@
             "c": "A pattern for single functions; causes performance issues",
             "d": "A memory management pattern; causes memory leaks"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 2
     },
     {
         "question": "What is PIMPL (Pointer to Implementation) idiom?",
@@ -467,7 +513,8 @@
             "c": "A performance optimization technique",
             "d": "A memory management pattern"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 3
     },
     {
         "question": "What is the difference between composition and inheritance?",
@@ -477,7 +524,8 @@
             "c": "Composition is faster than inheritance",
             "d": "Inheritance is more flexible than composition"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 1
     },
     {
         "question": "What does 'favor composition over inheritance' mean?",
@@ -487,7 +535,8 @@
             "c": "Composition is always faster",
             "d": "Inheritance is deprecated"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 2
     },
     {
         "question": "What is the Rule of Three/Five in C++?",
@@ -497,6 +546,7 @@
             "c": "Rules for template parameters",
             "d": "Performance optimization rules"
         },
-        "answer": "b"
+        "answer": "b",
+        "difficulty": 2
     }
 ]
