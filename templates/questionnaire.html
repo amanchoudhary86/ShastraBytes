@@ -1,320 +1,342 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Career Questionnaire</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/questionnaire.css') }}">
-</head>
-<body>
-    <div class="questionnaire-container">
-        <form method="POST" action="{{ url_for('questionnaire') }}" class="questionnaire-form">
-            <div class="progress-bar">
-                <div class="progress-step active" data-step="1">1</div>
-                <div class="progress-step" data-step="2">2</div>
-                <div class="progress-step" data-step="3">3</div>
-                <div class="progress-step" data-step="4">4</div>
-                <div class="progress-step" data-step="5">5</div>
-                <div class="progress-step" data-step="6">6</div>
-            </div>
+{% extends "base.html" %} 
+{% block title %}Career Questionnaire{% endblock %} 
 
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="flash-message {{ category }}">
-                            {{ message }}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/questionnaire.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title text-center">Career Questionnaire</h2>
+                    <div class="progress-bar">
+                        <div class="progress-step active" data-step="1">1</div>
+                        <div class="progress-step" data-step="2">2</div>
+                        <div class="progress-step" data-step="3">3</div>
+                        <div class="progress-step" data-step="4">4</div>
+                        <div class="progress-step" data-step="5">5</div>
+                        <div class="progress-step" data-step="6">6</div>
+                    </div>
+
+                    <form method="POST" action="{{ url_for('questionnaire') }}" class="questionnaire-form">
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ category }}">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+
+                        <!-- Step 1 -->
+                        <div class="form-step active" data-step="1">
+                            <h2>What best describes you?</h2>
+                            <div class="form-group">
+                                <div class="option-cards">
+                                    <label class="option-card">
+                                        <input type="radio" name="role" value="student" required>
+                                        <div class="card-content">
+                                            <h3>Student</h3>
+                                            <p>Currently pursuing education</p>
+                                        </div>
+                                    </label>
+                                    <label class="option-card">
+                                        <input type="radio" name="role" value="developer">
+                                        <div class="card-content">
+                                            <h3>Developer</h3>
+                                            <p>Professional experience in tech</p>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
 
-            <!-- Step 1 -->
-            <div class="form-step active" data-step="1">
-                <h2>What best describes you?</h2>
-                <div class="form-group">
-                    <div class="option-cards">
-                        <label class="option-card">
-                            <input type="radio" name="role" value="student" required>
-                            <div class="card-content">
-                                <h3>Student</h3>
-                                <p>Currently pursuing education</p>
+                        <!-- Step 2 -->
+                        <div class="form-step" data-step="2">
+                            <h2>Which company interests you?</h2>
+                            <div class="form-group">
+                                <div class="option-cards company-cards">
+                                    <label class="option-card">
+                                        <input type="radio" name="company" value="meta" required>
+                                        <div class="card-content">
+                                            <h3>Meta</h3>
+                                        </div>
+                                    </label>
+                                    <label class="option-card">
+                                        <input type="radio" name="company" value="apple">
+                                        <div class="card-content">
+                                            <h3>Apple</h3>
+                                        </div>
+                                    </label>
+                                    <label class="option-card">
+                                        <input type="radio" name="company" value="amazon">
+                                        <div class="card-content">
+                                            <h3>Amazon</h3>
+                                        </div>
+                                    </label>
+                                    <label class="option-card">
+                                        <input type="radio" name="company" value="netflix">
+                                        <div class="card-content">
+                                            <h3>Netflix</h3>
+                                        </div>
+                                    </label>
+                                    <label class="option-card">
+                                        <input type="radio" name="company" value="google">
+                                        <div class="card-content">
+                                            <h3>Google</h3>
+                                        </div>
+                                    </label>
+                                    <label class="option-card">
+                                        <input type="radio" name="company" value="microsoft">
+                                        <div class="card-content">
+                                            <h3>Microsoft</h3>
+                                        </div>
+                                    </label>
+                                </div>
                             </div>
-                        </label>
-                        <label class="option-card">
-                            <input type="radio" name="role" value="developer">
-                            <div class="card-content">
-                                <h3>Developer</h3>
-                                <p>Professional experience in tech</p>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="form-step" data-step="3">
+                            <h2>What role interests you?</h2>
+                            <div class="form-group">
+                                <div class="option-cards role-cards">
+                                    <label class="option-card">
+                                        <input type="radio" name="position" value="software_engineer" required>
+                                        <div class="card-content">
+                                            <h3>Software Engineer</h3>
+                                        </div>
+                                    </label>
+                                    <label class="option-card">
+                                        <input type="radio" name="position" value="data_scientist">
+                                        <div class="card-content">
+                                            <h3>Data Scientist</h3>
+                                        </div>
+                                    </label>
+                                    <label class="option-card">
+                                        <input type="radio" name="position" value="ml_engineer">
+                                        <div class="card-content">
+                                            <h3>ML Engineer</h3>
+                                        </div>
+                                    </label>
+                                    <label class="option-card">
+                                        <input type="radio" name="position" value="frontend_developer">
+                                        <div class="card-content">
+                                            <h3>Frontend Developer</h3>
+                                        </div>
+                                    </label>
+                                    <label class="option-card">
+                                        <input type="radio" name="position" value="backend_developer">
+                                        <div class="card-content">
+                                            <h3>Backend Developer</h3>
+                                        </div>
+                                    </label>
+                                    <label class="option-card">
+                                        <input type="radio" name="position" value="devops_engineer">
+                                        <div class="card-content">
+                                            <h3>DevOps Engineer</h3>
+                                        </div>
+                                    </label>
+                                </div>
                             </div>
-                        </label>
-                    </div>
+                        </div>
+
+                        <!-- Step 4 -->
+                        <div class="form-step" data-step="4">
+                            <h2>What are your current skills?</h2>
+                            <div class="form-group">
+                                <div class="option-cards skill-cards">
+                                    <label class="option-card">
+                                        <input type="checkbox" name="skills" value="python">
+                                        <div class="card-content">
+                                            <h3>Python</h3>
+                                        </div>
+                                    </label>
+                                    <label class="option-card">
+                                        <input type="checkbox" name="skills" value="cpp">
+                                        <div class="card-content">
+                                            <h3>C/C++</h3>
+                                        </div>
+                                    </label>
+                                    <label class="option-card">
+                                        <input type="checkbox" name="skills" value="java">
+                                        <div class="card-content">
+                                            <h3>Java</h3>
+                                        </div>
+                                    </label>
+                                    <label class="option-card">
+                                        <input type="checkbox" name="skills" value="webdev">
+                                        <div class="card-content">
+                                            <h3>Web Development</h3>
+                                        </div>
+                                    </label>
+                                    <label class="option-card">
+                                        <input type="checkbox" name="skills" value="javascript">
+                                        <div class="card-content">
+                                            <h3>JavaScript</h3>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 5 -->
+                        <div class="form-step" data-step="5">
+                            <h2>Choose your specialization</h2>
+                            <div class="form-group">
+                                <div class="option-cards specialization-cards">
+                                    <label class="option-card">
+                                        <input type="radio" name="specialization" value="web_development" required>
+                                        <div class="card-content">
+                                            <h3>Web Development</h3>
+                                        </div>
+                                    </label>
+                                    <label class="option-card">
+                                        <input type="radio" name="specialization" value="mobile_development">
+                                        <div class="card-content">
+                                            <h3>Mobile Development</h3>
+                                        </div>
+                                    </label>
+                                    <label class="option-card">
+                                        <input type="radio" name="specialization" value="machine_learning">
+                                        <div class="card-content">
+                                            <h3>Machine Learning</h3>
+                                        </div>
+                                    </label>
+                                    <label class="option-card">
+                                        <input type="radio" name="specialization" value="data_science">
+                                        <div class="card-content">
+                                            <h3>Data Science</h3>
+                                        </div>
+                                    </label>
+                                    <label class="option-card">
+                                        <input type="radio" name="specialization" value="cloud_computing">
+                                        <div class="card-content">
+                                            <h3>Cloud Computing</h3>
+                                        </div>
+                                    </label>
+                                    <label class="option-card">
+                                        <input type="radio" name="specialization" value="cybersecurity">
+                                        <div class="card-content">
+                                            <h3>Cybersecurity</h3>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 6 -->
+                        <div class="form-step" data-step="6">
+                            <h2>What skills do you want to excel in?</h2>
+                            <div class="form-group">
+                                <div class="option-cards">
+                                    <label class="option-card">
+                                        <input type="radio" name="skill_focus" value="soft_skills" required>
+                                        <div class="card-content">
+                                            <h3>Soft Skills</h3>
+                                            <p>Communication, Leadership, Team Management</p>
+                                        </div>
+                                    </label>
+                                    <label class="option-card">
+                                        <input type="radio" name="skill_focus" value="hard_skills">
+                                        <div class="card-content">
+                                            <h3>Hard Skills</h3>
+                                            <p>Technical Skills, Programming, Architecture</p>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-navigation">
+                            <button type="button" class="btn btn-3d btn-secondary-3d prev-btn" style="display: none;">Previous</button>
+                            <button type="button" class="btn btn-3d btn-primary-3d next-btn">Next</button>
+                            <button type="submit" class="btn btn-3d btn-success-3d submit-btn" style="display: none;">Submit</button>
+                        </div>
+                    </form>
                 </div>
             </div>
-
-            <!-- Step 2 -->
-            <div class="form-step" data-step="2">
-                <h2>Which company interests you?</h2>
-                <div class="form-group">
-                    <div class="option-cards company-cards">
-                        <label class="option-card">
-                            <input type="radio" name="company" value="meta" required>
-                            <div class="card-content">
-                                <h3>Meta</h3>
-                            </div>
-                        </label>
-                        <label class="option-card">
-                            <input type="radio" name="company" value="apple">
-                            <div class="card-content">
-                                <h3>Apple</h3>
-                            </div>
-                        </label>
-                        <label class="option-card">
-                            <input type="radio" name="company" value="amazon">
-                            <div class="card-content">
-                                <h3>Amazon</h3>
-                            </div>
-                        </label>
-                        <label class="option-card">
-                            <input type="radio" name="company" value="netflix">
-                            <div class="card-content">
-                                <h3>Netflix</h3>
-                            </div>
-                        </label>
-                        <label class="option-card">
-                            <input type="radio" name="company" value="google">
-                            <div class="card-content">
-                                <h3>Google</h3>
-                            </div>
-                        </label>
-                        <label class="option-card">
-                            <input type="radio" name="company" value="microsoft">
-                            <div class="card-content">
-                                <h3>Microsoft</h3>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 3 -->
-            <div class="form-step" data-step="3">
-                <h2>What role interests you?</h2>
-                <div class="form-group">
-                    <div class="option-cards role-cards">
-                        <label class="option-card">
-                            <input type="radio" name="position" value="software_engineer" required>
-                            <div class="card-content">
-                                <h3>Software Engineer</h3>
-                            </div>
-                        </label>
-                        <label class="option-card">
-                            <input type="radio" name="position" value="data_scientist">
-                            <div class="card-content">
-                                <h3>Data Scientist</h3>
-                            </div>
-                        </label>
-                        <label class="option-card">
-                            <input type="radio" name="position" value="ml_engineer">
-                            <div class="card-content">
-                                <h3>ML Engineer</h3>
-                            </div>
-                        </label>
-                        <label class="option-card">
-                            <input type="radio" name="position" value="frontend_developer">
-                            <div class="card-content">
-                                <h3>Frontend Developer</h3>
-                            </div>
-                        </label>
-                        <label class="option-card">
-                            <input type="radio" name="position" value="backend_developer">
-                            <div class="card-content">
-                                <h3>Backend Developer</h3>
-                            </div>
-                        </label>
-                        <label class="option-card">
-                            <input type="radio" name="position" value="devops_engineer">
-                            <div class="card-content">
-                                <h3>DevOps Engineer</h3>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 4 -->
-            <div class="form-step" data-step="4">
-                <h2>What are your current skills?</h2>
-                <div class="form-group">
-                    <div class="option-cards skill-cards">
-                        <label class="option-card">
-                            <input type="checkbox" name="skills" value="python">
-                            <div class="card-content">
-                                <h3>Python</h3>
-                            </div>
-                        </label>
-                        <label class="option-card">
-                            <input type="checkbox" name="skills" value="cpp">
-                            <div class="card-content">
-                                <h3>C/C++</h3>
-                            </div>
-                        </label>
-                        <label class="option-card">
-                            <input type="checkbox" name="skills" value="java">
-                            <div class="card-content">
-                                <h3>Java</h3>
-                            </div>
-                        </label>
-                        <label class="option-card">
-                            <input type="checkbox" name="skills" value="webdev">
-                            <div class="card-content">
-                                <h3>Web Development</h3>
-                            </div>
-                        </label>
-                        <label class="option-card">
-                            <input type="checkbox" name="skills" value="javascript">
-                            <div class="card-content">
-                                <h3>JavaScript</h3>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 5 -->
-            <div class="form-step" data-step="5">
-                <h2>Choose your specialization</h2>
-                <div class="form-group">
-                    <div class="option-cards specialization-cards">
-                        <label class="option-card">
-                            <input type="radio" name="specialization" value="web_development" required>
-                            <div class="card-content">
-                                <h3>Web Development</h3>
-                            </div>
-                        </label>
-                        <label class="option-card">
-                            <input type="radio" name="specialization" value="mobile_development">
-                            <div class="card-content">
-                                <h3>Mobile Development</h3>
-                            </div>
-                        </label>
-                        <label class="option-card">
-                            <input type="radio" name="specialization" value="machine_learning">
-                            <div class="card-content">
-                                <h3>Machine Learning</h3>
-                            </div>
-                        </label>
-                        <label class="option-card">
-                            <input type="radio" name="specialization" value="data_science">
-                            <div class="card-content">
-                                <h3>Data Science</h3>
-                            </div>
-                        </label>
-                        <label class="option-card">
-                            <input type="radio" name="specialization" value="cloud_computing">
-                            <div class="card-content">
-                                <h3>Cloud Computing</h3>
-                            </div>
-                        </label>
-                        <label class="option-card">
-                            <input type="radio" name="specialization" value="cybersecurity">
-                            <div class="card-content">
-                                <h3>Cybersecurity</h3>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 6 -->
-            <div class="form-step" data-step="6">
-                <h2>What skills do you want to excel in?</h2>
-                <div class="form-group">
-                    <div class="option-cards">
-                        <label class="option-card">
-                            <input type="radio" name="skill_focus" value="soft_skills" required>
-                            <div class="card-content">
-                                <h3>Soft Skills</h3>
-                                <p>Communication, Leadership, Team Management</p>
-                            </div>
-                        </label>
-                        <label class="option-card">
-                            <input type="radio" name="skill_focus" value="hard_skills">
-                            <div class="card-content">
-                                <h3>Hard Skills</h3>
-                                <p>Technical Skills, Programming, Architecture</p>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-navigation">
-                <button type="button" class="nav-btn prev-btn" style="display: none;">Previous</button>
-                <button type="button" class="nav-btn next-btn">Next</button>
-                <button type="submit" class="submit-btn" style="display: none;">Submit</button>
-            </div>
-        </form>
+        </div>
     </div>
+</div>
+{% endblock %}
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('.questionnaire-form');
-            const steps = document.querySelectorAll('.form-step');
-            const progressSteps = document.querySelectorAll('.progress-step');
-            const prevBtn = document.querySelector('.prev-btn');
-            const nextBtn = document.querySelector('.next-btn');
-            const submitBtn = document.querySelector('.submit-btn');
-            let currentStep = 1;
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('.questionnaire-form');
+        const steps = document.querySelectorAll('.form-step');
+        const progressSteps = document.querySelectorAll('.progress-step');
+        const prevBtn = document.querySelector('.prev-btn');
+        const nextBtn = document.querySelector('.next-btn');
+        const submitBtn = document.querySelector('.submit-btn');
+        let currentStep = 1;
 
-            function updateStep(step) {
-                steps.forEach(s => s.classList.remove('active'));
-                progressSteps.forEach(p => p.classList.remove('active'));
-                
-                document.querySelector(`.form-step[data-step="${step}"]`).classList.add('active');
-                for (let i = 1; i <= step; i++) {
-                    document.querySelector(`.progress-step[data-step="${i}"]`).classList.add('active');
+        function updateStep(step) {
+            steps.forEach(s => s.classList.remove('active'));
+            progressSteps.forEach(p => p.classList.remove('active'));
+            
+            document.querySelector(`.form-step[data-step="${step}"]`).classList.add('active');
+            for (let i = 1; i <= step; i++) {
+                document.querySelector(`.progress-step[data-step="${i}"]`).classList.add('active');
+            }
+
+            prevBtn.style.display = step === 1 ? 'none' : 'block';
+            if (step === steps.length) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'block';
+            } else {
+                nextBtn.style.display = 'block';
+                submitBtn.style.display = 'none';
+            }
+        }
+
+        nextBtn.addEventListener('click', () => {
+            const currentStepEl = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+            let isValid = true;
+            let alertMessage = 'Please complete this step before proceeding.';
+
+            // Check for required radio inputs
+            const requiredRadios = currentStepEl.querySelectorAll('input[type="radio"][required]');
+            const radioNames = [...new Set([...requiredRadios].map(r => r.name))];
+            radioNames.forEach(name => {
+                if (!form.querySelector(`input[name="${name}"]:checked`)) {
+                    isValid = false;
                 }
+            });
 
-                prevBtn.style.display = step === 1 ? 'none' : 'block';
-                if (step === steps.length) {
-                    nextBtn.style.display = 'none';
-                    submitBtn.style.display = 'block';
-                } else {
-                    nextBtn.style.display = 'block';
-                    submitBtn.style.display = 'none';
+            // Special validation for Step 4 (skills checkboxes)
+            if (currentStep === 4) {
+                const skillCheckboxes = currentStepEl.querySelectorAll('input[name="skills"]:checked');
+                if (skillCheckboxes.length === 0) {
+                    isValid = false;
+                    alertMessage = 'Please select at least one skill.';
                 }
             }
 
-            nextBtn.addEventListener('click', () => {
-                const currentInputs = document.querySelector(`.form-step[data-step="${currentStep}"]`).querySelectorAll('input[required]');
-                let isValid = true;
-
-                currentInputs.forEach(input => {
-                    if (input.type === 'radio') {
-                        const name = input.name;
-                        const checked = document.querySelector(`input[name="${name}"]:checked`);
-                        if (!checked) isValid = false;
-                    } else if (!input.value) {
-                        isValid = false;
-                    }
-                });
-
-                if (isValid && currentStep < steps.length) {
+            if (isValid) {
+                if (currentStep < steps.length) {
                     currentStep++;
                     updateStep(currentStep);
                 }
-            });
-
-            prevBtn.addEventListener('click', () => {
-                if (currentStep > 1) {
-                    currentStep--;
-                    updateStep(currentStep);
-                }
-            });
-
-            // Initialize first step
-            updateStep(1);
+            } else {
+                alert(alertMessage);
+            }
         });
-    </script>
-</body>
-</html>
+
+        prevBtn.addEventListener('click', () => {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStep(currentStep);
+            }
+        });
+
+        // Initialize first step
+        updateStep(1);
+    });
+</script>
+{% endblock %}

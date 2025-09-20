@@ -7,7 +7,8 @@
       "c": "O(n) always",
       "d": "O(1) always"
     },
-    "answer": "a"
+    "answer": "a",
+    "difficulty": 1
   },
   {
     "question": "Which Python data structure would be most efficient for implementing a stack?",
@@ -17,7 +18,8 @@
       "c": "list with insert(0) and pop(0)",
       "d": "Both a and b are equally efficient"
     },
-    "answer": "d"
+    "answer": "d",
+    "difficulty": 1
   },
   {
     "question": "What happens when you try to access a key that doesn't exist in a Python dictionary?",
@@ -27,7 +29,8 @@
       "c": "Raises KeyError",
       "d": "Returns False"
     },
-    "answer": "c"
+    "answer": "c",
+    "difficulty": 1
   },
   {
     "question": "In Python, which of the following has the best time complexity for checking membership?",
@@ -37,7 +40,8 @@
       "c": "set",
       "d": "string"
     },
-    "answer": "c"
+    "answer": "c",
+    "difficulty": 1
   },
   {
     "question": "What is the output of `list(range(5))[-1::-2]`?",
@@ -47,7 +51,8 @@
       "c": "[0, 2, 4]",
       "d": "[4, 2]"
     },
-    "answer": "a"
+    "answer": "a",
+    "difficulty": 2
   },
   {
     "question": "What is the purpose of the `__init__` method in Python classes?",
@@ -57,7 +62,8 @@
       "c": "To initialize instance variables when an object is created",
       "d": "To define class methods"
     },
-    "answer": "c"
+    "answer": "c",
+    "difficulty": 1
   },
   {
     "question": "Which of the following correctly demonstrates method overriding in Python?",
@@ -67,7 +73,8 @@
       "c": "Using the @override decorator",
       "d": "Creating static methods"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 2
   },
   {
     "question": "What does the `super()` function do in Python?",
@@ -77,7 +84,8 @@
       "c": "Makes a method static",
       "d": "Creates multiple inheritance"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 2
   },
   {
     "question": "How does Python implement private variables?",
@@ -87,7 +95,8 @@
       "c": "Using double underscore prefix (__variable) for name mangling",
       "d": "Python doesn't support private variables"
     },
-    "answer": "c"
+    "answer": "c",
+    "difficulty": 2
   },
   {
     "question": "What is the difference between `@staticmethod` and `@classmethod` decorators?",
@@ -97,7 +106,8 @@
       "c": "staticmethod is for private methods, classmethod is for public methods",
       "d": "staticmethod can only be called on instances, classmethod only on classes"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 2
   },
   {
     "question": "What is the Global Interpreter Lock (GIL) in Python?",
@@ -107,7 +117,8 @@
       "c": "A memory management technique",
       "d": "A debugging tool"
     },
-    "answer": "a"
+    "answer": "a",
+    "difficulty": 3
   },
   {
     "question": "What is the difference between `copy.copy()` and `copy.deepcopy()`?",
@@ -117,7 +128,8 @@
       "c": "copy() is faster, deepcopy() is more secure",
       "d": "copy() works on lists, deepcopy() works on dictionaries"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 2
   },
   {
     "question": "Which of the following objects are immutable in Python?",
@@ -127,7 +139,8 @@
       "c": "list, tuple, str",
       "d": "dict, set, frozenset"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 2
   },
   {
     "question": "What happens when you assign one list to another in Python (list2 = list1)?",
@@ -137,7 +150,8 @@
       "c": "Creates a shallow copy",
       "d": "Raises an error"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 1
   },
   {
     "question": "How does Python's garbage collection work?",
@@ -147,7 +161,8 @@
       "c": "Mark and sweep algorithm only",
       "d": "Automatic memory allocation without cleanup"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 3
   },
   {
     "question": "What is the output of `list(map(lambda x: x**2, filter(lambda x: x%2==0, [1,2,3,4,5])))`?",
@@ -157,7 +172,8 @@
       "c": "[2, 4]",
       "d": "[1, 9, 25]"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 2
   },
   {
     "question": "What is a closure in Python?",
@@ -167,7 +183,8 @@
       "c": "A way to close loops",
       "d": "A type of exception handling"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 3
   },
   {
     "question": "What is the difference between a generator and a list comprehension?",
@@ -177,7 +194,8 @@
       "c": "Generators are faster, list comprehensions are more readable",
       "d": "Generators work with numbers, list comprehensions work with strings"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 2
   },
   {
     "question": "What does the `yield` keyword do in Python?",
@@ -187,7 +205,8 @@
       "c": "Creates a list",
       "d": "Handles exceptions"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 2
   },
   {
     "question": "How do you create a decorator that takes arguments?",
@@ -197,7 +216,8 @@
       "c": "Use the @property decorator",
       "d": "Decorators cannot take arguments"
     },
-    "answer": "a"
+    "answer": "a",
+    "difficulty": 3
   },
   {
     "question": "What is the correct order of exception handling blocks?",
@@ -207,7 +227,8 @@
       "c": "except, try, else, finally",
       "d": "try, except, finally, else"
     },
-    "answer": "a"
+    "answer": "a",
+    "difficulty": 1
   },
   {
     "question": "What happens if an exception occurs in the `finally` block?",
@@ -217,7 +238,8 @@
       "c": "It gets logged automatically",
       "d": "It causes a syntax error"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 2
   },
   {
     "question": "How do you create a custom exception in Python?",
@@ -227,7 +249,8 @@
       "c": "Define a function with 'exception' in its name",
       "d": "Use the raise keyword only"
     },
-    "answer": "a"
+    "answer": "a",
+    "difficulty": 1
   },
   {
     "question": "What is the purpose of the `else` clause in a try-except block?",
@@ -237,7 +260,8 @@
       "c": "Same as finally clause",
       "d": "Used for cleanup code"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 1
   },
   {
     "question": "Which built-in function can help you debug by examining object attributes?",
@@ -247,7 +271,8 @@
       "c": "dir()",
       "d": "help()"
     },
-    "answer": "c"
+    "answer": "c",
+    "difficulty": 1
   },
   {
     "question": "What is the main limitation of Python's threading due to the GIL?",
@@ -257,7 +282,8 @@
       "c": "Threads are slower than processes",
       "d": "Memory leaks occur"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 3
   },
   {
     "question": "When should you use `multiprocessing` instead of `threading` in Python?",
@@ -267,7 +293,8 @@
       "c": "For network operations",
       "d": "For file operations"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 2
   },
   {
     "question": "What does `asyncio` provide in Python?",
@@ -277,7 +304,8 @@
       "c": "Parallel processing",
       "d": "Memory management"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 2
   },
   {
     "question": "What is the difference between `concurrent.futures.ThreadPoolExecutor` and `ProcessPoolExecutor`?",
@@ -287,7 +315,8 @@
       "c": "ThreadPoolExecutor is faster",
       "d": "ProcessPoolExecutor is deprecated"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 2
   },
   {
     "question": "What keyword is used to define an asynchronous function in Python?",
@@ -297,7 +326,8 @@
       "c": "asyncio",
       "d": "concurrent"
     },
-    "answer": "a"
+    "answer": "a",
+    "difficulty": 1
   },
   {
     "question": "What does `collections.defaultdict` do?",
@@ -307,7 +337,8 @@
       "c": "Creates a sorted dictionary",
       "d": "Creates a thread-safe dictionary"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 2
   },
   {
     "question": "Which `itertools` function would you use to create combinations of elements?",
@@ -317,7 +348,8 @@
       "c": "itertools.product()",
       "d": "itertools.chain()"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 2
   },
   {
     "question": "What is the purpose of `collections.Counter`?",
@@ -327,7 +359,8 @@
       "c": "To create numerical counters",
       "d": "To count function calls"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 2
   },
   {
     "question": "How do you create a double-ended queue in Python?",
@@ -337,7 +370,8 @@
       "c": "collections.stack()",
       "d": "list()"
     },
-    "answer": "a"
+    "answer": "a",
+    "difficulty": 1
   },
   {
     "question": "What does `itertools.cycle()` do?",
@@ -347,7 +381,8 @@
       "c": "Measures execution cycles",
       "d": "Creates circular references"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 2
   },
   {
     "question": "What is the time complexity of the `in` operator for strings in Python?",
@@ -357,17 +392,19 @@
       "c": "O(n)",
       "d": "O(n²)"
     },
-    "answer": "c"
+    "answer": "c",
+    "difficulty": 1
   },
   {
-    "question": "What does the regex pattern `r'\\d+'` match?",
+    "question": "What does the regex pattern `r'\d+'` match?",
     "options": {
       "a": "One or more digits",
       "b": "Exactly one digit",
       "c": "Zero or more digits",
       "d": "Any character except digits"
     },
-    "answer": "a"
+    "answer": "a",
+    "difficulty": 1
   },
   {
     "question": "Which string method would you use to split a string by multiple delimiters?",
@@ -377,7 +414,8 @@
       "c": "partition() method",
       "d": "replace() method"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 2
   },
   {
     "question": "What is the difference between `str.find()` and `str.index()`?",
@@ -387,7 +425,8 @@
       "c": "find() is case-sensitive, index() is not",
       "d": "find() works with substrings, index() works with characters"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 1
   },
   {
     "question": "How do you make a string comparison case-insensitive?",
@@ -397,7 +436,8 @@
       "c": "Use the casefold() method",
       "d": "Both b and c are correct"
     },
-    "answer": "d"
+    "answer": "d",
+    "difficulty": 1
   },
   {
     "question": "What is the advantage of using `with` statement for file operations?",
@@ -407,7 +447,8 @@
       "c": "Better error messages",
       "d": "Compressed file storage"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 1
   },
   {
     "question": "How do you read a CSV file in Python without external libraries?",
@@ -417,7 +458,8 @@
       "c": "Use json.load()",
       "d": "Both a and b work, but b is preferred"
     },
-    "answer": "d"
+    "answer": "d",
+    "difficulty": 1
   },
   {
     "question": "What does the `'r+'` mode do when opening a file?",
@@ -427,7 +469,8 @@
       "c": "Read and write (file must exist)",
       "d": "Create new file for reading and writing"
     },
-    "answer": "c"
+    "answer": "c",
+    "difficulty": 1
   },
   {
     "question": "How do you handle different text encodings when reading files?",
@@ -437,7 +480,8 @@
       "c": "Use the codecs module",
       "d": "Both b and c are correct"
     },
-    "answer": "d"
+    "answer": "d",
+    "difficulty": 2
   },
   {
     "question": "What is the difference between `json.loads()` and `json.load()`?",
@@ -447,7 +491,8 @@
       "c": "loads() is faster",
       "d": "load() is deprecated"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 1
   },
   {
     "question": "What is monkey patching in Python?",
@@ -457,7 +502,8 @@
       "c": "A type of inheritance",
       "d": "Error handling method"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 3
   },
   {
     "question": "What does the `__slots__` attribute do in a Python class?",
@@ -467,7 +513,8 @@
       "c": "Defines method signatures",
       "d": "Creates static methods"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 3
   },
   {
     "question": "What is the purpose of `*args` and `**kwargs` in function definitions?",
@@ -477,7 +524,8 @@
       "c": "Default parameter values",
       "d": "Type hints"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 2
   },
   {
     "question": "What does the `@property` decorator do?",
@@ -487,7 +535,8 @@
       "c": "Creates private methods",
       "d": "Handles exceptions automatically"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 2
   },
   {
     "question": "What is metaclass in Python?",
@@ -497,6 +546,7 @@
       "c": "A parent class",
       "d": "An abstract class"
     },
-    "answer": "b"
+    "answer": "b",
+    "difficulty": 3
   }
 ]

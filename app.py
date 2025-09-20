@@ -204,113 +204,64 @@ def get_latest_test_result(user_id):
         }
     return None
 
-# Test page
+def get_user_skills(user_id):
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT previous_skills FROM user_preferences WHERE user_id = ? ORDER BY id DESC LIMIT 1", (user_id,))
+    skills = cursor.fetchone()
+    db.close()
+    if skills:
+        return [skill.strip() for skill in skills[0].split(',')]
+    return []
+
+def get_questions_by_skill_and_difficulty(skill, difficulty):
+    filename = f"{skill.lower()}_mcqs.json"
+    if not os.path.exists(filename):
+        return []
+    with open(filename, 'r') as f:
+        questions = json.load(f)
+    return [q for q in questions if q['difficulty'] == difficulty]
+
 @app.route('/test')
 def test():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    
-    # Load questions from JSON files
-    try:
-        with open('python_mcqs.json', 'r') as f:
-            python_questions = json.load(f)
-        with open('cpp_mcqs.json', 'r') as f:
-            cpp_questions = json.load(f)
-    except FileNotFoundError:
-        flash('Question files not found. Please contact administrator.', 'error')
-        return redirect(url_for('dashboard'))
-    
-    # Select random 10 questions from each
-    random_python = random.sample(python_questions, min(10, len(python_questions)))
-    random_cpp = random.sample(cpp_questions, min(10, len(cpp_questions)))
-    
-    # Store questions in session for result calculation
-    session['test_questions'] = {
-        'python': random_python,
-        'cpp': random_cpp
-    }
-    
-    # Combine all questions for display
-    all_questions = random_python + random_cpp
-    
-    return render_template('test.html', 
-                         questions=all_questions,
-                         user_name=session['user_name'])
 
-# Submit test route
-@app.route('/submit_test', methods=['POST'])
-def submit_test():
-    if 'user_id' not in session or 'test_questions' not in session:
-        return redirect(url_for('login'))
-    
-    # Get stored questions
-    stored_questions = session['test_questions']
-    
-    # Calculate scores
-    python_score = 0
-    cpp_score = 0
-    
-    # Check Python answers
-    for i, question in enumerate(stored_questions['python']):
-        user_answer = request.form.get(f'q{i}')
-        if user_answer == question['answer']:
-            python_score += 1
-    
-    # Check C++ answers (questions 10-19)
-    for i, question in enumerate(stored_questions['cpp']):
-        user_answer = request.form.get(f'q{i+10}')
-        if user_answer == question['answer']:
-            cpp_score += 1
-    
-    total_score = python_score + cpp_score
-    percentage = (total_score / 20) * 100
-    
-    # Store result in database
-    db = get_db()
-    cursor = db.cursor()
-    
-    try:
-        cursor.execute('''
-            INSERT INTO test_results 
-            (user_id, user_name, python_score, cpp_score, total_score, percentage)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ''', (session['user_id'], session['user_name'], python_score, cpp_score, total_score, percentage))
-        db.commit()
-        
-        # Clear test questions from session
-        session.pop('test_questions', None)
-        
-        flash('Test completed successfully!', 'success')
-        return redirect(url_for('test_result', 
-                               python_score=python_score,
-                               cpp_score=cpp_score,
-                               total_score=total_score,
-                               percentage=percentage))
-        
-    except sqlite3.Error as e:
-        print(f"Database error: {e}")
-        flash('Error saving test results. Please try again.', 'error')
-        return redirect(url_for('test'))
-    finally:
-        db.close()
+    with open('python_mcqs.json', 'r') as f:
+        python_questions = json.load(f)
+
+    with open('cpp_mcqs.json', 'r') as f:
+        cpp_questions = json.load(f)
+
+    questions = python_questions + cpp_questions
+    random.shuffle(questions)
+    session['questions'] = questions
+
+    return render_template('test.html', user_name=session['user_name'], questions=questions)
 
 # Test result page
-@app.route('/test_result')
+@app.route('/test_result', methods=['POST'])
 def test_result():
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
-    # Convert URL parameters to appropriate types
-    python_score = int(request.args.get('python_score', 0))
-    cpp_score = int(request.args.get('cpp_score', 0))
-    total_score = int(request.args.get('total_score', 0))
-    percentage = float(request.args.get('percentage', 0))
+    score = 0
+    questions = session.get('questions', [])
+    total = len(questions)
+    answer_map = {'a': 0, 'b': 1, 'c': 2, 'd': 3}
+
+    for i, question in enumerate(questions):
+        user_answer = request.form.get(f'question_{i+1}')
+        correct_answer_index = answer_map.get(question['answer'])
+        if user_answer and int(user_answer) == correct_answer_index:
+            score += 1
     
+    # Clear questions from session
+    session.pop('questions', None)
+
     return render_template('test_result.html',
-                         python_score=python_score,
-                         cpp_score=cpp_score,
-                         total_score=total_score,
-                         percentage=percentage,
+                         score=score,
+                         total=total,
                          user_name=session['user_name'])
 
 # Questionnaire (protected)

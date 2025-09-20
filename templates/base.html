@@ -1,111 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}ShastraBytes{% endblock %}</title>
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/base.css') }}"
-    />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
     {% block extra_css %}{% endblock %}
-  </head>
-  <body class="light-mode">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="{{ url_for('home') }}">ShastraBytes</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('home') }}">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('about') }}">About Us</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="guidelines.html"
-                >Community Guidelines</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="howitworks.html">How It Works</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="contact.html">Contact Us</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="copyright.html">Copyright</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="terms.html">Terms & Conditions</a>
-            </li>
-          </ul>
-        </div>
-          <div class="ms-auto d-flex align-items-center">
-            {% if session.get('user_id') %}
-            <div class="dropdown">
-              <a
-                class="btn btn-secondary dropdown-toggle"
-                href="#"
-                id="userDropdown"
-                role="button"
-                data-bs-toggle="dropdown"
-              >
-                <img
-                  src="https://i.pinimg.com/originals/59/af/9c/59af9cd100daf9aa154cc753dd58316d.jpg"
-                  class="rounded-circle me-2"
-                  alt="avatar"
-                />
-                {{ session.get('user_name') }}
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end">
-                <li>
-                  <a class="dropdown-item" href="{{ url_for('dashboard') }}"
-                    >Dashboard</a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="{{ url_for('dashboard') }}"
-                    >My Profile</a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="{{ url_for('logout') }}"
-                    >Logout</a
-                  >
-                </li>
-              </ul>
+</head>
+<body>
+    <!-- Enhanced Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}">
+                <i class="fas fa-code"></i> ShastraBytes
+            </a>
+            
+            <div class="navbar-nav mx-auto">
             </div>
-            {% else %}
-            <a class="btn btn-outline-light me-2" href="{{ url_for('login') }}"
-              >Login</a
-            >
-            <a class="btn btn-primary" href="{{ url_for('signup') }}"
-              >Sign Up</a
-            >
-            {% endif %}
-            <button class="btn btn-outline-light ms-3" onclick="toggleTheme()">
-              🌗
-            </button>
-          </div>
-        
-      </div>
+            
+            <div class="profile-section">
+                {% if session.get('user_id') %}
+                <div class="level-badge">
+                    <i class="fas fa-medal"></i>
+                    <span id="userLevel">Beginner</span> <!-- This will be determined by test results -->
+                </div>
+                
+                <div class="profile-dropdown">
+                    <div class="profile-avatar" id="profileAvatar">
+                        {{ session.get('user_name')[0] if session.get('user_name') else 'U' }}
+                    </div>
+                    <div class="profile-menu" id="profileMenu">
+                        <a href="{{ url_for('dashboard') }}" class="profile-menu-item">
+                            <i class="fas fa-user"></i>
+                            Dashboard
+                        </a>
+                        <a href="#" class="profile-menu-item">
+                            <i class="fas fa-cog"></i>
+                            Settings
+                        </a>
+                        <a href="#" class="profile-menu-item">
+                            <i class="fas fa-chart-line"></i>
+                            Progress
+                        </a>
+                        <hr style="margin: 0.5rem 0; border-color: rgba(255,255,255,0.1);">
+                        <a href="{{ url_for('logout') }}" class="profile-menu-item">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout
+                        </a>
+                    </div>
+                </div>
+                {% else %}
+                <a href="{{ url_for('login') }}" class="btn btn-3d btn-primary-3d">Login</a>
+                <a href="{{ url_for('signup') }}" class="btn btn-3d btn-success-3d">Sign Up</a>
+                {% endif %}
+                
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
     </nav>
 
-    <main class="container mt-4">
+    <main class="container mt-5 pt-5">
       {% with messages = get_flashed_messages(with_categories=true) %} {% for
       category, message in messages %}
       <div class="alert alert-{{ category }}">{{ message }}</div>
@@ -113,6 +71,49 @@
     </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='js/toggle.js') }}"></script>
+    <script>
+        // Profile Dropdown Functionality
+        const profileAvatar = document.getElementById('profileAvatar');
+        const profileMenu = document.getElementById('profileMenu');
+
+        if (profileAvatar) {
+            profileAvatar.addEventListener('click', (e) => {
+                e.stopPropagation();
+                profileMenu.classList.toggle('show');
+            });
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (profileMenu && !profileMenu.contains(e.target) && !profileAvatar.contains(e.target)) {
+                profileMenu.classList.remove('show');
+            }
+        });
+
+        // Theme Toggle Functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const themeIcon = themeToggle.querySelector('i');
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeIcon.className = 'fas fa-sun';
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
   </body>
 </html>

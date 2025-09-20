@@ -1,209 +1,1191 @@
-{% extends 'base.html' %} 
-{% block title %}Dashboard | ShastraBytes{% endblock %}
-{% block content %}
-<link rel="stylesheet" href="/static/css/dashboard.css" />
-<div class="container dashboard mt-5">
-  <div class="row">
-    <div class="col-12 text-center mb-4">
-      <h1 class="dashboard-heading">
-        Welcome back, {{ user_name or 'User' }}!
-      </h1>
-      <p class="dashboard-subtitle">
-        Here's your personalized career dashboard.
-      </p>
-    </div>
-  </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | ShastraBytes</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #f43f5e;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --light-bg: #f8fafc;
+            --light-card: #ffffff;
+            --text-primary-dark: #f1f5f9;
+            --text-secondary-dark: #94a3b8;
+            --text-primary-light: #1e293b;
+            --text-secondary-light: #64748b;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
 
-  <!-- Progress Bar Section -->
-  <div class="progress-section mt-4 mb-4">
-    <div class="row justify-content-center">
-      <div class="col-md-8">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <span class="progress-label">Profile Completion</span>
-          <span class="progress-percentage">{{ profile_completion }}%</span>
-        </div>
-        <div class="progress" style="height: 8px; border-radius: 10px;">
-          <div 
-            class="progress-bar bg-primary" 
-            role="progressbar" 
-            style="width: {{ profile_completion }}%; border-radius: 10px;" 
-            aria-valuenow="{{ profile_completion }}" 
-            aria-valuemin="0" 
-            aria-valuemax="100">
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+        body.dark-mode {
+            --primary-color: #f59e0b;
+            --secondary-color: #6366f1;
+            --success-color: #059669;
+            --warning-color: #f43f5e;
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --light-bg: #0f172a;
+            --light-card: #1e293b;
+            --text-primary-dark: #f1f5f9;
+            --text-secondary-dark: #94a3b8;
+            --text-primary-light: #f1f5f9;
+            --text-secondary-light: #94a3b8;
+            --gradient-1: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-2: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-3: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
 
-  <!-- Test Results Section -->
-  {% if latest_test_result %}
-  <div class="test-results-section mb-4">
-    <div class="row justify-content-center">
-      <div class="col-md-8">
-        <div class="card shadow-sm">
-          <div class="card-header bg-success text-white">
-            <h5 class="mb-0">Latest Test Results</h5>
-            <small>Taken on {{ latest_test_result.test_date }}</small>
-          </div>
-          <div class="card-body">
-            <div class="row text-center">
-              <div class="col-md-3">
-                <div class="test-score-item">
-                  <h6>Overall Score</h6>
-                  <div class="score-display">{{ latest_test_result.total_score }}/20</div>
-                  <div class="percentage-display">{{ "%.1f"|format(latest_test_result.percentage) }}%</div>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            transition: all 0.3s ease;
+            background: var(--light-bg);
+            color: var(--text-primary-light);
+        }
+        body.dark-mode {
+            background: var(--dark-bg);
+            color: var(--text-primary-dark);
+        }
+
+        /* Enhanced Navbar */
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            padding: 1rem 0;
+        }
+
+        .dark-mode .navbar-custom {
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .dream-company {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--gradient-2);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            color: white;
+            font-weight: 600;
+            transform: perspective(1000px) rotateX(0deg);
+            transition: all 0.3s ease;
+        }
+
+        .dream-company:hover {
+            transform: perspective(1000px) rotateX(-5deg) rotateY(5deg);
+            box-shadow: 0 10px 25px rgba(244, 63, 94, 0.3);
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .profile-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--gradient-3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform: perspective(1000px) rotateX(0deg);
+        }
+
+        .profile-avatar:hover {
+            transform: perspective(1000px) rotateX(-10deg) rotateY(10deg) scale(1.1);
+            box-shadow: 0 15px 35px rgba(79, 172, 254, 0.4);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--primary-color);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--primary-color);
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        .level-badge {
+            background: var(--gradient-1);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* Profile Dropdown */
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-menu {
+            position: absolute;
+            top: 120%;
+            right: 0;
+            background: var(--light-card);
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dark-mode .profile-menu {
+            background: var(--dark-card);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .profile-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .profile-menu-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1.5rem;
+            color: var(--text-primary-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .dark-mode .profile-menu-item {
+            color: var(--text-primary-dark);
+        }
+
+        .profile-menu-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary-color);
+            transform: translateX(5px);
+        }
+
+        .profile-menu-item i {
+            margin-right: 0.8rem;
+            width: 20px;
+        }
+
+        /* Compact Roadmap Path */
+        .roadmap-section {
+            margin: 1rem 0 2rem 0;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .dark-mode .roadmap-section {
+            background: rgba(30, 41, 59, 0.7);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .roadmap-title {
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary-light);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .dark-mode .roadmap-title {
+            color: var(--text-primary-dark);
+        }
+
+        .roadmap-path {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.5rem 0;
+        }
+
+        .path-line {
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: rgba(99, 102, 241, 0.2);
+            border-radius: 1px;
+            z-index: 1;
+            transform: translateY(-50%);
+        }
+
+        .path-line::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 0;
+            height: 4px;
+            background: var(--gradient-1);
+            border-radius: 2px;
+            width: 40%; /* Progress indicator */
+            box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
+            animation: pathGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes pathGlow {
+            from { box-shadow: 0 0 8px rgba(99, 102, 241, 0.4); }
+            to { box-shadow: 0 0 12px rgba(99, 102, 241, 0.6); }
+        }
+
+        .stage-item {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .stage-marker {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin: 0 auto 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            position: relative;
+            transition: all 0.3s ease;
+            transform: perspective(1000px) rotateX(0deg);
+        }
+
+        .stage-marker.completed {
+            background: var(--success-color);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .stage-marker.current {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            animation: currentPulse 2s ease-in-out infinite alternate;
+        }
+
+        .stage-marker.locked {
+            background: #e5e7eb;
+            color: #9ca3af;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .stage-marker.locked {
+            background: #374151;
+            color: #6b7280;
+        }
+
+        @keyframes currentPulse {
+            from { 
+                box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+                transform: scale(1);
+            }
+            to { 
+                box-shadow: 0 6px 16px rgba(99, 102, 241, 0.5);
+                transform: scale(1.05);
+            }
+        }
+
+        .stage-marker:hover {
+            transform: perspective(1000px) rotateY(10deg) scale(1.1);
+        }
+
+        .stage-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-primary-light);
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .dark-mode .stage-title {
+            color: var(--text-primary-dark);
+        }
+
+        .stage-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--dark-card);
+            color: white;
+            padding: 0.5rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            margin-bottom: 0.5rem;
+        }
+
+        .stage-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: var(--dark-card);
+        }
+
+        .stage-item:hover .stage-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Welcome Popup */
+        .welcome-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: var(--light-card);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .dark-mode .welcome-popup {
+            background: var(--dark-card);
+        }
+
+        .welcome-popup.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .welcome-popup-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .welcome-popup-backdrop.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .welcome-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .welcome-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary-light);
+        }
+
+        .dark-mode .welcome-title {
+            color: var(--text-primary-dark);
+        }
+
+        .welcome-message {
+            color: var(--text-secondary-light);
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .dark-mode .welcome-message {
+            color: var(--text-secondary-dark);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .roadmap-path {
+                gap: 0.5rem;
+            }
+
+            .stage-marker {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+
+            .stage-title {
+                font-size: 0.7rem;
+            }
+
+            .path-line {
+                left: 15%;
+                right: 15%;
+            }
+        }
+
+        /* Dashboard Content */
+        .dashboard {
+            padding: 2rem 0;
+            min-height: calc(100vh - 80px);
+        }
+
+        .dashboard-heading {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .dashboard-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary-light);
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .dark-mode .dashboard-subtitle {
+            color: var(--text-secondary-dark);
+        }
+
+        /* 3D Progress Section */
+        .progress-card {
+            background: var(--light-card);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            transform: perspective(1000px) rotateX(0deg);
+            transition: all 0.4s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dark-mode .progress-card {
+            background: var(--dark-card);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .progress-card:hover {
+            transform: perspective(1000px) rotateX(-5deg) translateY(-10px);
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .progress-3d {
+            height: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .progress-bar-3d {
+            height: 100%;
+            background: var(--gradient-1);
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 
+                0 2px 8px rgba(99, 102, 241, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            transition: all 0.6s ease;
+        }
+
+        .progress-bar-3d::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+            border-radius: 10px 10px 0 0;
+        }
+
+        /* 3D Test Results Card */
+        .test-results-card {
+            background: var(--light-card);
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            transform: perspective(1000px) rotateX(0deg);
+            transition: all 0.4s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dark-mode .test-results-card {
+            background: var(--dark-card);
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .test-results-card:hover {
+            transform: perspective(1000px) rotateX(-3deg) translateY(-15px);
+            box-shadow: 
+                0 40px 80px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .card-header-3d {
+            background: var(--gradient-2);
+            color: white;
+            padding: 1.5rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header-3d::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+        }
+
+        .test-score-item {
+            padding: 1.5rem;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            transform: perspective(1000px) rotateX(0deg);
+        }
+
+        .test-score-item:hover {
+            transform: perspective(1000px) rotateX(-5deg) rotateY(5deg) translateZ(10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .score-display {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 3D Feature Cards */
+        .feature-card {
+            background: var(--light-card);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.4s ease;
+            transform: perspective(1000px) rotateX(0deg);
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dark-mode .feature-card {
+            background: var(--dark-card);
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, var(--primary-color), transparent);
+            animation: rotate 4s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .feature-card:hover {
+            transform: perspective(1000px) rotateX(-10deg) rotateY(5deg) translateY(-20px);
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        /* 3D Buttons */
+        .btn-3d {
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            transform: perspective(1000px) rotateX(0deg);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-3d::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-3d:hover::before {
+            left: 100%;
+        }
+
+        .btn-3d:hover {
+            transform: perspective(1000px) rotateX(-10deg) translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-primary-3d {
+            background: var(--gradient-1);
+            color: white;
+        }
+
+        .btn-success-3d {
+            background: var(--gradient-3);
+            color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard-heading {
+                font-size: 2rem;
+            }
+            
+            .navbar-custom .container {
+                flex-wrap: wrap;
+            }
+            
+            .profile-section {
+                gap: 0.5rem;
+            }
+            
+            .feature-card {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Enhanced Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-code"></i> ShastraBytes
+            </a>
+            
+            <div class="navbar-nav mx-auto">
+                <div class="dream-company">
+                    <i class="fas fa-target"></i>
+                    <span id="dreamCompany">Google</span> <!-- This will be fetched from registration -->
                 </div>
-              </div>
-              <div class="col-md-3">
-                <div class="test-score-item">
-                  <h6>Python</h6>
-                  <div class="score-display">{{ latest_test_result.python_score }}/10</div>
-                  <div class="percentage-display">{{ "%.1f"|format((latest_test_result.python_score/10)*100) }}%</div>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="test-score-item">
-                  <h6>C++</h6>
-                  <div class="score-display">{{ latest_test_result.cpp_score }}/10</div>
-                  <div class="percentage-display">{{ "%.1f"|format((latest_test_result.cpp_score/10)*100) }}%</div>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="test-score-item">
-                  <a href="{{ url_for('test_result', 
-                                      python_score=latest_test_result.python_score,
-                                      cpp_score=latest_test_result.cpp_score,
-                                      total_score=latest_test_result.total_score,
-                                      percentage=latest_test_result.percentage) }}" 
-                     class="btn btn-outline-primary btn-sm">
-                    View Details
-                  </a>
-                </div>
-              </div>
             </div>
-          </div>
+            
+            <div class="profile-section">
+                <div class="level-badge">
+                    <i class="fas fa-medal"></i>
+                    <span id="userLevel">Beginner</span> <!-- This will be determined by test results -->
+                </div>
+                
+                <div class="profile-dropdown">
+                    <div class="profile-avatar" id="profileAvatar">
+                        JD <!-- This will show user initials -->
+                    </div>
+                    <div class="profile-menu" id="profileMenu">
+                        <a href="#" class="profile-menu-item">
+                            <i class="fas fa-user"></i>
+                            Edit Profile
+                        </a>
+                        <a href="#" class="profile-menu-item">
+                            <i class="fas fa-cog"></i>
+                            Settings
+                        </a>
+                        <a href="#" class="profile-menu-item">
+                            <i class="fas fa-chart-line"></i>
+                            Progress
+                        </a>
+                        <a href="#" class="profile-menu-item">
+                            <i class="fas fa-trophy"></i>
+                            Achievements
+                        </a>
+                        <hr style="margin: 0.5rem 0; border-color: rgba(255,255,255,0.1);">
+                        <a href="#" class="profile-menu-item">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout
+                        </a>
+                    </div>
+                </div>
+                
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
         </div>
-      </div>
-    </div>
-  </div>
-  {% endif %}
-  
-  <!-- Action Buttons -->
-  <div class="action-buttons mb-4">
-    <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="btn-group-custom">
-          {% if profile_completion < 100 %}
-            <a href="{{ url_for('questionnaire') }}" class="btn btn-primary btn-lg me-3">
-              Complete Profile
-            </a>
-            <button class="btn btn-secondary btn-lg" disabled>
-              Begin Test
-            </button>
-          {% else %}
-            <a href="{{ url_for('questionnaire') }}" class="btn btn-outline-primary btn-lg me-3">
-              Update Profile
-            </a>
-            <a href="{{ url_for('test') }}" class="btn btn-success btn-lg">
-              Begin Test
-            </a>
-          {% endif %}
+    </nav>
+
+    <!-- Welcome Popup -->
+    <div class="welcome-popup-backdrop" id="welcomeBackdrop"></div>
+    <div class="welcome-popup" id="welcomePopup">
+        <div class="welcome-icon">
+            <i class="fas fa-rocket"></i>
         </div>
-      </div>
+        <h3 class="welcome-title">Welcome back, John!</h3>
+        <p class="welcome-message">Ready to continue your journey towards your dream company? Let's make today count!</p>
+        <a href="#" class="btn btn-3d btn-primary-3d" id="closeWelcome">
+            <i class="fas fa-arrow-right me-2"></i>
+            Let's Go!
+        </a>
     </div>
-  </div>
 
-  <div class="row dashboard-cards">
-    <div class="col-md-4 mb-4">
-      <div class="card card-feature shadow-sm">
-        <div class="card-body text-center">
-          <h5 class="card-title">Roadmap</h5>
-          <p class="card-text">
-            View and follow your AI-powered career roadmap.
-          </p>
-          <a href="#" class="btn btn-outline-primary btn-sm">View Roadmap</a>
+    <!-- Dashboard Content -->
+    <div class="container dashboard mt-5 pt-5">
+        <!-- Compact Career Roadmap -->
+        <div class="row">
+            <div class="col-12">
+                <div class="roadmap-section">
+                    <h4 class="roadmap-title">
+                        <i class="fas fa-route"></i>
+                        Career Progress
+                    </h4>
+                    <div class="roadmap-path">
+                        <div class="path-line"></div>
+                        
+                        <div class="stage-item">
+                            <div class="stage-marker completed" data-stage="1">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="stage-title">Profile</div>
+                            <div class="stage-tooltip">Profile Setup Complete</div>
+                        </div>
+
+                        <div class="stage-item">
+                            <div class="stage-marker completed" data-stage="2">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="stage-title">Assessment</div>
+                            <div class="stage-tooltip">Skill Assessment Complete</div>
+                        </div>
+
+                        <div class="stage-item">
+                            <div class="stage-marker current" data-stage="3">
+                                <i class="fas fa-play"></i>
+                            </div>
+                            <div class="stage-title">Learning</div>
+                            <div class="stage-tooltip">Learning Path - In Progress</div>
+                        </div>
+
+                        <div class="stage-item">
+                            <div class="stage-marker locked" data-stage="4">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <div class="stage-title">Projects</div>
+                            <div class="stage-tooltip">Practice Projects - Locked</div>
+                        </div>
+
+                        <div class="stage-item">
+                            <div class="stage-marker locked" data-stage="5">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <div class="stage-title">Interview</div>
+                            <div class="stage-tooltip">Interview Prep - Locked</div>
+                        </div>
+
+                        <div class="stage-item">
+                            <div class="stage-marker locked" data-stage="6">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <div class="stage-title">Job Ready</div>
+                            <div class="stage-tooltip">Job Ready - Locked</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <div class="col-md-4 mb-4">
-      <div class="card card-feature shadow-sm">
-        <div class="card-body text-center">
-          <h5 class="card-title">Interview Prep</h5>
-          <p class="card-text">
-            Practice mock interviews and coding questions.
-          </p>
-          <a href="#" class="btn btn-outline-primary btn-sm">Start Practice</a>
+
+        <!-- Progress Section - Removed as requested -->
+
+        <!-- Test Results Section -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-md-10">
+                <div class="test-results-card">
+                    <div class="card-header-3d">
+                        <h5 class="mb-0 fw-bold">Latest Test Results</h5>
+                        <small>Taken on September 15, 2025</small>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row text-center">
+                            <div class="col-md-3 mb-3">
+                                <div class="test-score-item">
+                                    <h6 class="text-uppercase small fw-bold mb-2">Overall Score</h6>
+                                    <div class="score-display">16/20</div>
+                                    <div class="text-muted">80.0%</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="test-score-item">
+                                    <h6 class="text-uppercase small fw-bold mb-2">Python</h6>
+                                    <div class="score-display">8/10</div>
+                                    <div class="text-muted">80.0%</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="test-score-item">
+                                    <h6 class="text-uppercase small fw-bold mb-2">C++</h6>
+                                    <div class="score-display">8/10</div>
+                                    <div class="text-muted">80.0%</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="test-score-item">
+                                    <a href="#" class="btn btn-3d btn-primary-3d">
+                                        <i class="fas fa-chart-line me-2"></i>
+                                        View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <div class="col-md-4 mb-4">
-      <div class="card card-feature shadow-sm">
-        <div class="card-body text-center">
-          <h5 class="card-title">Skill Tracker</h5>
-          <p class="card-text">Track your progress and upcoming goals.</p>
-          <a href="#" class="btn btn-outline-primary btn-sm">View Progress</a>
+
+        <!-- Action Buttons -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-md-6 text-center">
+                <a href="#" class="btn btn-3d btn-primary-3d me-3 mb-3">
+                    <i class="fas fa-user-edit me-2"></i>
+                    Update Profile
+                </a>
+                <a href="{{ url_for('test') }}" class="btn btn-3d btn-success-3d mb-3">
+                    <i class="fas fa-play me-2"></i>
+                    Begin Test
+                </a>
+            </div>
         </div>
-      </div>
+
+        <!-- Gamified Career Roadmap - Removed from here since it's now at the top -->
+
+        <!-- Feature Cards -->
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-road"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Roadmap</h5>
+                    <p class="text-muted mb-4">
+                        View and follow your AI-powered career roadmap.
+                    </p>
+                    <a href="#" class="btn btn-3d btn-primary-3d">
+                        <i class="fas fa-arrow-right me-2"></i>
+                        View Roadmap
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-microphone"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Interview Prep</h5>
+                    <p class="text-muted mb-4">
+                        Practice mock interviews and coding questions.
+                    </p>
+                    <a href="#" class="btn btn-3d btn-success-3d">
+                        <i class="fas fa-play me-2"></i>
+                        Start Practice
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Skill Tracker</h5>
+                    <p class="text-muted mb-4">Track your progress and upcoming goals.</p>
+                    <a href="#" class="btn btn-3d btn-primary-3d">
+                        <i class="fas fa-eye me-2"></i>
+                        View Progress
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<style>
-.test-results-section {
-  margin-bottom: 2rem;
-}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Welcome Popup Functionality
+        const welcomePopup = document.getElementById('welcomePopup');
+        const welcomeBackdrop = document.getElementById('welcomeBackdrop');
+        const closeWelcome = document.getElementById('closeWelcome');
 
-.test-score-item {
-  padding: 1rem;
-  border-radius: 8px;
-  background-color: #f8f9fa;
-  margin-bottom: 1rem;
-}
+        // Show welcome popup on page load (simulating login)
+        function showWelcomePopup() {
+            welcomeBackdrop.classList.add('show');
+            welcomePopup.classList.add('show');
+        }
 
-.test-score-item h6 {
-  color: #6c757d;
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
+        // Hide welcome popup
+        function hideWelcomePopup() {
+            welcomeBackdrop.classList.remove('show');
+            welcomePopup.classList.remove('show');
+        }
 
-.score-display {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #212529;
-  margin-bottom: 0.25rem;
-}
+        // Event listeners for closing popup
+        closeWelcome.addEventListener('click', (e) => {
+            e.preventDefault();
+            hideWelcomePopup();
+        });
 
-.percentage-display {
-  font-size: 1rem;
-  color: #6c757d;
-}
+        welcomeBackdrop.addEventListener('click', hideWelcomePopup);
 
-.btn-group-custom {
-  text-align: center;
-}
+        // Show popup after page loads (simulate login)
+        setTimeout(showWelcomePopup, 500);
 
-.btn-group-custom .btn {
-  margin: 0 0.5rem;
-}
+        // Profile Dropdown Functionality
+        const profileAvatar = document.getElementById('profileAvatar');
+        const profileMenu = document.getElementById('profileMenu');
 
-/* Responsive design for test results */
-@media (max-width: 768px) {
-  .test-score-item {
-    margin-bottom: 1rem;
-  }
-  
-  .score-display {
-    font-size: 1.2rem;
-  }
-  
-  .btn-group-custom .btn {
-    display: block;
-    margin: 0.5rem 0;
-    width: 100%;
-  }
-}
-</style>
-{% endblock %}
+        profileAvatar.addEventListener('click', (e) => {
+            e.stopPropagation();
+            profileMenu.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!profileMenu.contains(e.target) && !profileAvatar.contains(e.target)) {
+                profileMenu.classList.remove('show');
+            }
+        });
+
+        // Stage click functionality
+        document.querySelectorAll('.stage-marker').forEach(marker => {
+            marker.addEventListener('click', function() {
+                const stage = this.dataset.stage;
+                const isCompleted = this.classList.contains('completed');
+                const isCurrent = this.classList.contains('current');
+                
+                if (isCompleted || isCurrent) {
+                    // Show stage details or navigate to stage content
+                    console.log(`Navigating to stage ${stage}`);
+                    // You can add navigation logic here
+                } else {
+                    // Show locked message
+                    alert('Complete previous stages to unlock this one!');
+                }
+            });
+        });
+
+        // Function to update roadmap progress
+        function updateRoadmapProgress(currentStage) {
+            const stages = document.querySelectorAll('.stage-marker');
+            const pathProgress = document.querySelector('.path-line::before');
+            
+            stages.forEach((stage, index) => {
+                const stageNumber = index + 1;
+                const progressSpan = stage.parentElement.querySelector('.stage-progress');
+                
+                stage.classList.remove('completed', 'current', 'locked');
+                
+                if (stageNumber < currentStage) {
+                    stage.classList.add('completed');
+                    stage.querySelector('.stage-icon').innerHTML = '<i class="fas fa-check"></i>';
+                    progressSpan.textContent = '✓ Completed';
+                    progressSpan.className = 'stage-progress completed';
+                } else if (stageNumber === currentStage) {
+                    stage.classList.add('current');
+                    stage.querySelector('.stage-icon').innerHTML = '<i class="fas fa-play"></i>';
+                    progressSpan.textContent = '⏳ In Progress';
+                    progressSpan.className = 'stage-progress current';
+                } else {
+                    stage.classList.add('locked');
+                    stage.querySelector('.stage-icon').innerHTML = '<i class="fas fa-lock"></i>';
+                    progressSpan.textContent = '🔒 Locked';
+                    progressSpan.className = 'stage-progress locked';
+                }
+            });
+            
+            // Update path progress line
+            const progressPercentage = ((currentStage - 1) / (stages.length - 1)) * 100;
+            document.documentElement.style.setProperty('--roadmap-progress', `${progressPercentage}%`);
+        }
+
+        // Example: Update to current stage 3
+        updateRoadmapProgress(3);
+
+        // Theme Toggle Functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const themeIcon = themeToggle.querySelector('i');
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeIcon.className = 'fas fa-sun';
+        }
+
+        // Function to update user level based on test score
+        function updateUserLevel(percentage) {
+            const levelSpan = document.getElementById('userLevel');
+            const levelBadge = levelSpan.parentElement;
+            
+            if (percentage >= 90) {
+                levelSpan.textContent = 'Expert';
+                levelBadge.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+            } else if (percentage >= 75) {
+                levelSpan.textContent = 'Advanced';
+                levelBadge.style.background = 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)';
+            } else if (percentage >= 60) {
+                levelSpan.textContent = 'Intermediate';
+                levelBadge.style.background = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
+            } else {
+                levelSpan.textContent = 'Beginner';
+                levelBadge.style.background = 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)';
+            }
+        }
+
+        // Example usage - call this with actual test percentage
+        updateUserLevel(80);
+
+        // Function to update dream company (call this with data from registration)
+        function updateDreamCompany(company) {
+            document.getElementById('dreamCompany').textContent = company;
+        }
+
+        // Function to update profile avatar with user initials
+        function updateProfileAvatar(firstName, lastName) {
+            const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
+            document.getElementById('profileAvatar').textContent = initials;
+        }
+
+        // Example usage
+        // updateDreamCompany('Microsoft');
+        // updateProfileAvatar('John', 'Doe');
+    </script>
+</body>
+</html>
