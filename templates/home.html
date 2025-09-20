@@ -114,24 +114,36 @@
     <div class="row">
       <div class="col-lg-3 col-md-6 mb-4">
         <div class="stat-item">
+          <div class="stat-icon">
+            <img src="{{ url_for('static', filename='images/Students.png') }}" alt="Students" class="stat-image">
+          </div>
           <span class="stat-number" data-count="10000">0</span>
           <span class="stat-label">Students</span>
         </div>
       </div>
       <div class="col-lg-3 col-md-6 mb-4">
         <div class="stat-item">
+          <div class="stat-icon">
+            <img src="{{ url_for('static', filename='images/Courses.png') }}" alt="Courses" class="stat-image">
+          </div>
           <span class="stat-number" data-count="50">0</span>
           <span class="stat-label">Courses</span>
         </div>
       </div>
       <div class="col-lg-3 col-md-6 mb-4">
         <div class="stat-item">
+          <div class="stat-icon">
+            <img src="{{ url_for('static', filename='images/SuccessRate.png') }}" alt="Success Rate" class="stat-image">
+          </div>
           <span class="stat-number" data-count="95">0</span>
           <span class="stat-label">Success Rate</span>
         </div>
       </div>
       <div class="col-lg-3 col-md-6 mb-4">
         <div class="stat-item">
+          <div class="stat-icon">
+            <img src="{{ url_for('static', filename='images/SupportHours.png') }}" alt="Support Hours" class="stat-image">
+          </div>
           <span class="stat-number" data-count="24">0</span>
           <span class="stat-label">Support Hours</span>
         </div>
@@ -166,25 +178,124 @@
   function animateCounters() {
     const counters = document.querySelectorAll('[data-count]');
     
-    counters.forEach(counter => {
+    counters.forEach((counter, index) => {
       const target = parseInt(counter.getAttribute('data-count'));
-      const duration = 2000; // 2 seconds
+      const duration = 2000 + (index * 200); // Stagger the animations
       const increment = target / (duration / 16); // 60fps
       let current = 0;
       
-      const updateCounter = () => {
-        if (current < target) {
-          current += increment;
-          counter.textContent = Math.ceil(current);
-          requestAnimationFrame(updateCounter);
-        } else {
-          counter.textContent = target;
-        }
-      };
-      
-      updateCounter();
+      // Add some initial delay for staggered effect
+      setTimeout(() => {
+        const updateCounter = () => {
+          if (current < target) {
+            current += increment;
+            counter.textContent = Math.ceil(current);
+            requestAnimationFrame(updateCounter);
+          } else {
+            counter.textContent = target;
+            // Add completion animation
+            counter.style.animation = 'bounceIn 0.5s ease';
+          }
+        };
+        
+        updateCounter();
+      }, index * 100);
     });
   }
+  
+  // Add bounce animation keyframes
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes bounceIn {
+      0% { transform: scale(0.8); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    @keyframes statItemEntrance {
+      0% { 
+        opacity: 0; 
+        transform: translateY(50px) scale(0.8) rotateX(-20deg); 
+      }
+      100% { 
+        opacity: 1; 
+        transform: translateY(0) scale(1) rotateX(0deg); 
+      }
+    }
+    
+    .stat-item {
+      animation: statItemEntrance 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Enhanced hover effects for stat items
+  function addStatHoverEffects() {
+    const statItems = document.querySelectorAll('.stat-item');
+    
+    statItems.forEach((item, index) => {
+      // Add mouse enter effect
+      item.addEventListener('mouseenter', function() {
+        // Create ripple effect
+        const ripple = document.createElement('div');
+        ripple.style.cssText = `
+          position: absolute;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.3);
+          transform: scale(0);
+          animation: ripple 0.6s linear;
+          pointer-events: none;
+          z-index: 1;
+        `;
+        
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = '50%';
+        ripple.style.top = '50%';
+        ripple.style.marginLeft = -size/2 + 'px';
+        ripple.style.marginTop = -size/2 + 'px';
+        
+        this.appendChild(ripple);
+        
+        // Remove ripple after animation
+        setTimeout(() => ripple.remove(), 600);
+      });
+      
+      // Add tilt effect based on mouse position
+      item.addEventListener('mousemove', function(e) {
+        const rect = this.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const deltaX = (e.clientX - centerX) / (rect.width / 2);
+        const deltaY = (e.clientY - centerY) / (rect.height / 2);
+        
+        this.style.transform = `
+          translateY(-10px) 
+          scale(1.05) 
+          rotateX(${deltaY * 10}deg) 
+          rotateY(${deltaX * 10}deg)
+          perspective(1000px)
+        `;
+      });
+      
+      item.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1) rotateX(0) rotateY(0)';
+      });
+    });
+  }
+
+  // Add ripple animation CSS
+  const rippleStyle = document.createElement('style');
+  rippleStyle.textContent = `
+    @keyframes ripple {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+  `;
+  document.head.appendChild(rippleStyle);
 
   // Stats section observer
   const statsObserver = new IntersectionObserver(function(entries) {
@@ -241,6 +352,7 @@
   // Initialize when DOM is loaded
   document.addEventListener('DOMContentLoaded', function() {
     staggerFeatureCards();
+    addStatHoverEffects(); // Initialize stat item hover effects
     
     // Add hover effects to buttons
     const heroButtons = document.querySelectorAll('.btn-hero');
