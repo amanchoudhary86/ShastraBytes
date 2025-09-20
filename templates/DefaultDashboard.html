@@ -546,9 +546,9 @@
         }
 
         .progress-card:hover {
-            transform: perspective(1000px) rotateX(-5deg) translateY(-10px);
+            /* Removed floating animation */
             box-shadow: 
-                0 30px 60px rgba(0, 0, 0, 0.15),
+                0 20px 40px rgba(0, 0, 0, 0.12),
                 inset 0 1px 0 rgba(255, 255, 255, 0.8);
         }
 
@@ -604,9 +604,9 @@
         }
 
         .test-results-card:hover {
-            transform: perspective(1000px) rotateX(-3deg) translateY(-15px);
+            /* Removed floating animation */
             box-shadow: 
-                0 40px 80px rgba(0, 0, 0, 0.15),
+                0 25px 50px rgba(0, 0, 0, 0.12),
                 inset 0 1px 0 rgba(255, 255, 255, 0.8);
         }
 
@@ -639,8 +639,8 @@
         }
 
         .test-score-item:hover {
-            transform: perspective(1000px) rotateX(-5deg) rotateY(5deg) translateZ(10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            /* Removed floating animation */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
         }
 
         .score-display {
@@ -693,9 +693,9 @@
         }
 
         .feature-card:hover {
-            transform: perspective(1000px) rotateX(-10deg) rotateY(5deg) translateY(-20px);
+            /* Removed floating animation */
             box-shadow: 
-                0 30px 60px rgba(0, 0, 0, 0.15),
+                0 15px 30px rgba(0, 0, 0, 0.12),
                 inset 0 1px 0 rgba(255, 255, 255, 0.8);
         }
 
@@ -800,7 +800,11 @@
                 
                 <div class="profile-dropdown">
                     <div class="profile-avatar" id="profileAvatar">
-                        JD <!-- This will show user initials -->
+                        {% if user_name %}
+                            {{ user_name[:2].upper() }}
+                        {% else %}
+                            U
+                        {% endif %}
                     </div>
                     <div class="profile-menu" id="profileMenu">
                         <a href="#" class="profile-menu-item">
@@ -820,7 +824,7 @@
                             Achievements
                         </a>
                         <hr style="margin: 0.5rem 0; border-color: rgba(255,255,255,0.1);">
-                        <a href="#" class="profile-menu-item">
+                        <a href="{{ url_for('logout') }}" class="profile-menu-item">
                             <i class="fas fa-sign-out-alt"></i>
                             Logout
                         </a>
@@ -840,7 +844,7 @@
         <div class="welcome-icon">
             <i class="fas fa-rocket"></i>
         </div>
-        <h3 class="welcome-title">Welcome back, John!</h3>
+        <h3 class="welcome-title">Welcome back, {{ user_name or 'User' }}!</h3>
         <p class="welcome-message">Ready to continue your journey towards your dream company? Let's make today count!</p>
         <a href="#" class="btn btn-3d btn-primary-3d" id="closeWelcome">
             <i class="fas fa-arrow-right me-2"></i>
@@ -862,27 +866,61 @@
                         <div class="path-line"></div>
                         
                         <div class="stage-item">
-                            <div class="stage-marker completed" data-stage="1">
-                                <i class="fas fa-check"></i>
+                            <div class="stage-marker {% if profile_completion > 0 %}completed{% else %}current{% endif %}" data-stage="1">
+                                {% if profile_completion > 0 %}
+                                    <i class="fas fa-check"></i>
+                                {% else %}
+                                    <i class="fas fa-user"></i>
+                                {% endif %}
                             </div>
                             <div class="stage-title">Profile</div>
-                            <div class="stage-tooltip">Profile Setup Complete</div>
+                            <div class="stage-tooltip">
+                                {% if profile_completion > 0 %}
+                                    Profile Setup Complete ({{ profile_completion }}%)
+                                {% else %}
+                                    Complete your profile setup
+                                {% endif %}
+                            </div>
                         </div>
 
                         <div class="stage-item">
-                            <div class="stage-marker completed" data-stage="2">
-                                <i class="fas fa-check"></i>
+                            <div class="stage-marker {% if latest_test_result %}completed{% elif profile_completion > 0 %}current{% else %}locked{% endif %}" data-stage="2">
+                                {% if latest_test_result %}
+                                    <i class="fas fa-check"></i>
+                                {% elif profile_completion > 0 %}
+                                    <i class="fas fa-clipboard-list"></i>
+                                {% else %}
+                                    <i class="fas fa-lock"></i>
+                                {% endif %}
                             </div>
                             <div class="stage-title">Assessment</div>
-                            <div class="stage-tooltip">Skill Assessment Complete</div>
+                            <div class="stage-tooltip">
+                                {% if latest_test_result %}
+                                    Skill Assessment Complete ({{ latest_test_result.percentage }}%)
+                                {% elif profile_completion > 0 %}
+                                    Take your skill assessment
+                                {% else %}
+                                    Complete profile first
+                                {% endif %}
+                            </div>
                         </div>
 
                         <div class="stage-item">
-                            <div class="stage-marker current" data-stage="3">
-                                <i class="fas fa-play"></i>
+                            <div class="stage-marker {% if latest_test_result %}current{% elif profile_completion > 0 %}locked{% else %}locked{% endif %}" data-stage="3">
+                                {% if latest_test_result %}
+                                    <i class="fas fa-play"></i>
+                                {% else %}
+                                    <i class="fas fa-lock"></i>
+                                {% endif %}
                             </div>
                             <div class="stage-title">Learning</div>
-                            <div class="stage-tooltip">Learning Path - In Progress</div>
+                            <div class="stage-tooltip">
+                                {% if latest_test_result %}
+                                    Learning Path - Ready to Start
+                                {% else %}
+                                    Complete assessment first
+                                {% endif %}
+                            </div>
                         </div>
 
                         <div class="stage-item">
@@ -921,29 +959,34 @@
                 <div class="test-results-card">
                     <div class="card-header-3d">
                         <h5 class="mb-0 fw-bold">Latest Test Results</h5>
-                        <small>Taken on September 15, 2025</small>
+                        {% if latest_test_result %}
+                            <small>Taken on {{ latest_test_result.test_date.split(' ')[0] if latest_test_result.test_date else 'Recently' }}</small>
+                        {% else %}
+                            <small>No tests taken yet</small>
+                        {% endif %}
                     </div>
                     <div class="card-body p-4">
+                        {% if latest_test_result %}
                         <div class="row text-center">
                             <div class="col-md-3 mb-3">
                                 <div class="test-score-item">
                                     <h6 class="text-uppercase small fw-bold mb-2">Overall Score</h6>
-                                    <div class="score-display">16/20</div>
-                                    <div class="text-muted">80.0%</div>
+                                    <div class="score-display">{{ latest_test_result.total_score }}/20</div>
+                                    <div class="text-muted">{{ latest_test_result.percentage }}%</div>
                                 </div>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <div class="test-score-item">
                                     <h6 class="text-uppercase small fw-bold mb-2">Python</h6>
-                                    <div class="score-display">8/10</div>
-                                    <div class="text-muted">80.0%</div>
+                                    <div class="score-display">{{ latest_test_result.python_score }}/10</div>
+                                    <div class="text-muted">{{ (latest_test_result.python_score / 10 * 100) | round(1) }}%</div>
                                 </div>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <div class="test-score-item">
                                     <h6 class="text-uppercase small fw-bold mb-2">C++</h6>
-                                    <div class="score-display">8/10</div>
-                                    <div class="text-muted">80.0%</div>
+                                    <div class="score-display">{{ latest_test_result.cpp_score }}/10</div>
+                                    <div class="text-muted">{{ (latest_test_result.cpp_score / 10 * 100) | round(1) }}%</div>
                                 </div>
                             </div>
                             <div class="col-md-3 mb-3">
@@ -955,6 +998,19 @@
                                 </div>
                             </div>
                         </div>
+                        {% else %}
+                        <div class="text-center">
+                            <div class="mb-4">
+                                <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                                <h6 class="text-muted">No test results yet</h6>
+                                <p class="text-muted">Take your first assessment to see your progress here.</p>
+                            </div>
+                            <a href="#" class="btn btn-3d btn-primary-3d">
+                                <i class="fas fa-play me-2"></i>
+                                Begin Test
+                            </a>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

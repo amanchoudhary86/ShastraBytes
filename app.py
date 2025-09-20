@@ -75,11 +75,13 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
+        
         conn = sqlite3.connect("users.db")
         cursor = conn.cursor()
         cursor.execute("SELECT id, username, password FROM users WHERE email = ?", (email,))
         user = cursor.fetchone()
         conn.close()
+        
         if user and check_password_hash(user[2], password):
             session['user_id'] = user[0]
             session['user_name'] = user[1]
