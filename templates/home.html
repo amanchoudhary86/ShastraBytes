@@ -1,16 +1,296 @@
 {% extends 'base.html' %} 
 {% block title %}Home - ShastraBytes{% endblock %} 
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}" />
+{% endblock %}
+
 {% block content %}
-<div class="text-center py-5">
-  <h1 class="display-4">Welcome to ShastraBytes</h1>
-  <p class="lead mt-3">
-    Empowering learners and creators through technology, community, and
-    innovation.
-  </p>
-  <div class="mt-4">
-    <a href="{{ url_for('signup') }}" class="btn btn-3d btn-primary-3d">Get Started</a>
-    <a href="{{ url_for('about') }}" class="btn btn-3d btn-success-3d">Learn More</a>
+<!-- Hero Section -->
+<div class="hero-section">
+  <div class="floating-shapes">
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+  </div>
+  
+  <div class="container">
+    <div class="hero-content">
+      <h1 class="hero-title">Welcome to ShastraBytes</h1>
+      <p class="hero-subtitle">
+        Empowering learners and creators through technology, community, and innovation
+      </p>
+      <div class="hero-buttons">
+        <a href="{{ url_for('signup') }}" class="btn-hero btn-primary-hero">
+          <i class="fas fa-rocket"></i>
+          Get Started
+        </a>
+        <a href="{{ url_for('about') }}" class="btn-hero btn-secondary-hero">
+          <i class="fas fa-info-circle"></i>
+          Learn More
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Features Section -->
+<div class="features-section">
+  <div class="container">
+    <div class="row text-center mb-5">
+      <div class="col-12">
+        <h2 class="display-5 fw-bold mb-4 animate-on-scroll">Why Choose ShastraBytes?</h2>
+        <p class="lead text-muted animate-on-scroll">Discover what makes us different</p>
+      </div>
+    </div>
+    
+    <div class="row g-4">
+      <div class="col-lg-4 col-md-6">
+        <div class="feature-card animate-on-scroll">
+          <div class="feature-icon">
+            <i class="fas fa-code"></i>
+          </div>
+          <h4 class="mb-3">Learn by Doing</h4>
+          <p class="text-muted">Interactive coding challenges and real-world projects to accelerate your learning journey.</p>
+        </div>
+      </div>
+      
+      <div class="col-lg-4 col-md-6">
+        <div class="feature-card animate-on-scroll">
+          <div class="feature-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <h4 class="mb-3">Community Driven</h4>
+          <p class="text-muted">Connect with like-minded developers and learn from industry experts in our vibrant community.</p>
+        </div>
+      </div>
+      
+      <div class="col-lg-4 col-md-6">
+        <div class="feature-card animate-on-scroll">
+          <div class="feature-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h4 class="mb-3">Track Progress</h4>
+          <p class="text-muted">Monitor your growth with detailed analytics and personalized learning recommendations.</p>
+        </div>
+      </div>
+      
+      <div class="col-lg-4 col-md-6">
+        <div class="feature-card animate-on-scroll">
+          <div class="feature-icon">
+            <i class="fas fa-certificate"></i>
+          </div>
+          <h4 class="mb-3">Get Certified</h4>
+          <p class="text-muted">Earn industry-recognized certificates to showcase your skills to potential employers.</p>
+        </div>
+      </div>
+      
+      <div class="col-lg-4 col-md-6">
+        <div class="feature-card animate-on-scroll">
+          <div class="feature-icon">
+            <i class="fas fa-mobile-alt"></i>
+          </div>
+          <h4 class="mb-3">Learn Anywhere</h4>
+          <p class="text-muted">Access your courses on any device, anytime, anywhere with our mobile-friendly platform.</p>
+        </div>
+      </div>
+      
+      <div class="col-lg-4 col-md-6">
+        <div class="feature-card animate-on-scroll">
+          <div class="feature-icon">
+            <i class="fas fa-star"></i>
+          </div>
+          <h4 class="mb-3">Expert Mentorship</h4>
+          <p class="text-muted">Get guidance from experienced professionals who are passionate about teaching.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stats Section -->
+<div class="stats-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-item">
+          <span class="stat-number" data-count="10000">0</span>
+          <span class="stat-label">Students</span>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-item">
+          <span class="stat-number" data-count="50">0</span>
+          <span class="stat-label">Courses</span>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-item">
+          <span class="stat-number" data-count="95">0</span>
+          <span class="stat-label">Success Rate</span>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stat-item">
+          <span class="stat-number" data-count="24">0</span>
+          <span class="stat-label">Support Hours</span>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}
+
+{% block extra_js %}
+<script>
+  // Smooth scrolling animation observer
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+      }
+    });
+  }, observerOptions);
+
+  // Observe all elements with animate-on-scroll class
+  document.querySelectorAll('.animate-on-scroll').forEach(el => {
+    observer.observe(el);
+  });
+
+  // Counter animation for stats
+  function animateCounters() {
+    const counters = document.querySelectorAll('[data-count]');
+    
+    counters.forEach(counter => {
+      const target = parseInt(counter.getAttribute('data-count'));
+      const duration = 2000; // 2 seconds
+      const increment = target / (duration / 16); // 60fps
+      let current = 0;
+      
+      const updateCounter = () => {
+        if (current < target) {
+          current += increment;
+          counter.textContent = Math.ceil(current);
+          requestAnimationFrame(updateCounter);
+        } else {
+          counter.textContent = target;
+        }
+      };
+      
+      updateCounter();
+    });
+  }
+
+  // Stats section observer
+  const statsObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCounters();
+        statsObserver.unobserve(entry.target); // Only animate once
+      }
+    });
+  }, { threshold: 0.5 });
+
+  // Observe stats section
+  const statsSection = document.querySelector('.stats-section');
+  if (statsSection) {
+    statsObserver.observe(statsSection);
+  }
+
+  // Parallax effect for floating shapes
+  document.addEventListener('mousemove', function(e) {
+    const shapes = document.querySelectorAll('.shape');
+    const mouseX = e.clientX / window.innerWidth;
+    const mouseY = e.clientY / window.innerHeight;
+    
+    shapes.forEach((shape, index) => {
+      const speed = (index + 1) * 0.02;
+      const x = (mouseX - 0.5) * speed * 100;
+      const y = (mouseY - 0.5) * speed * 100;
+      
+      shape.style.transform = `translate(${x}px, ${y}px)`;
+    });
+  });
+
+  // Dynamic gradient animation speed control
+  let gradientSpeed = 15;
+  
+  document.addEventListener('scroll', function() {
+    const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+    gradientSpeed = 15 + (scrollPercent * 10); // Speed up gradient based on scroll
+    
+    const heroSection = document.querySelector('.hero-section');
+    if (heroSection) {
+      heroSection.style.animationDuration = `${gradientSpeed}s`;
+    }
+  });
+
+  // Add loading animation for feature cards
+  function staggerFeatureCards() {
+    const cards = document.querySelectorAll('.feature-card');
+    cards.forEach((card, index) => {
+      card.style.animationDelay = `${index * 0.1}s`;
+    });
+  }
+
+  // Initialize when DOM is loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    staggerFeatureCards();
+    
+    // Add hover effects to buttons
+    const heroButtons = document.querySelectorAll('.btn-hero');
+    heroButtons.forEach(button => {
+      button.addEventListener('mouseenter', function() {
+        this.style.transform = 'perspective(1000px) rotateX(-10deg) translateY(-8px) scale(1.05)';
+      });
+      
+      button.addEventListener('mouseleave', function() {
+        this.style.transform = 'perspective(1000px) rotateX(0deg) translateY(0px) scale(1)';
+      });
+    });
+  });
+
+  // Smooth page transitions
+  document.querySelectorAll('a[href^="/"]').forEach(link => {
+    link.addEventListener('click', function(e) {
+      if (this.href !== window.location.href) {
+        e.preventDefault();
+        
+        // Add fade out effect
+        document.body.style.opacity = '0.7';
+        document.body.style.transform = 'scale(0.98)';
+        
+        setTimeout(() => {
+          window.location.href = this.href;
+        }, 200);
+      }
+    });
+  });
+
+  // Add typing effect to hero title (optional enhancement)
+  function typewriterEffect() {
+    const title = document.querySelector('.hero-title');
+    const text = title.textContent;
+    title.textContent = '';
+    title.style.opacity = '1';
+    
+    let i = 0;
+    const typeInterval = setInterval(() => {
+      if (i < text.length) {
+        title.textContent += text.charAt(i);
+        i++;
+      } else {
+        clearInterval(typeInterval);
+      }
+    }, 100);
+  }
+
+  // Optional: Uncomment to enable typewriter effect
+  // setTimeout(typewriterEffect, 500);
+</script>
+{% endblock %} 
