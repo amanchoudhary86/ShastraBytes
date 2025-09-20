@@ -1,36 +1,117 @@
 {% extends "base.html" %} 
 {% block title %}Sign Up - ShastraBytes{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}" />
+{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h2 class="card-title text-center">Sign Up</h2>
-                    <form method="POST">
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" name="username" class="form-control" required />
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" name="email" class="form-control" required />
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" name="password" class="form-control" required />
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-3d btn-primary-3d">Sign Up</button>
-                        </div>
-                        <p class="mt-3 text-center">
-                            Already have an account? <a href="{{ url_for('login') }}">Login</a>
-                        </p>
-                    </form>
+<div class="signup-container">
+    <!-- Animated Background -->
+    <div class="signup-bg">
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+            <div class="shape shape-5"></div>
+        </div>
+    </div>
+    
+    <!-- Main Signup Card -->
+    <div class="signup-card" id="signupCard">
+        <div class="signup-header">
+            <div class="signup-icon">
+                <i class="fas fa-rocket"></i>
+            </div>
+            <h1 class="signup-title">Join ShastraBytes</h1>
+            <p class="signup-subtitle">Start your journey to your dream company</p>
+        </div>
+        
+        <form method="POST" class="signup-form" id="signupForm">
+            <!-- Username Field -->
+            <div class="form-group">
+                <div class="input-wrapper">
+                    <input type="text" name="username" id="username" class="form-input" required>
+                    <label for="username" class="form-label">Username</label>
+                    <div class="input-highlight"></div>
+                    <div class="input-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+                <div class="form-feedback" id="usernameFeedback"></div>
+            </div>
+            
+            <!-- Email Field -->
+            <div class="form-group">
+                <div class="input-wrapper">
+                    <input type="email" name="email" id="email" class="form-input" required>
+                    <label for="email" class="form-label">Email Address</label>
+                    <div class="input-highlight"></div>
+                    <div class="input-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                </div>
+                <div class="form-feedback" id="emailFeedback"></div>
+            </div>
+            
+            <!-- Password Field -->
+            <div class="form-group">
+                <div class="input-wrapper">
+                    <input type="password" name="password" id="password" class="form-input" required>
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-highlight"></div>
+                    <div class="input-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <button type="button" class="password-toggle" id="passwordToggle">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div class="form-feedback" id="passwordFeedback"></div>
+                <div class="password-strength" id="passwordStrength">
+                    <div class="strength-bar">
+                        <div class="strength-fill"></div>
+                    </div>
+                    <span class="strength-text">Password strength</span>
                 </div>
             </div>
+            
+            <!-- Submit Button -->
+            <button type="submit" class="signup-btn" id="signupBtn">
+                <span class="btn-text">Create Account</span>
+                <span class="btn-loader">
+                    <div class="spinner"></div>
+                </span>
+                <div class="btn-success">
+                    <i class="fas fa-check"></i>
+                </div>
+            </button>
+            
+            <!-- Login Link -->
+            <div class="signup-footer">
+                <p class="login-link">
+                    Already have an account? 
+                    <a href="{{ url_for('login') }}" class="link-animated">Sign In</a>
+                </p>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Success Modal -->
+    <div class="success-modal" id="successModal">
+        <div class="success-content">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>Welcome to ShastraBytes!</h3>
+            <p>Your account has been created successfully.</p>
         </div>
     </div>
 </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/signup.js') }}"></script>
 {% endblock %}
