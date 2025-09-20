@@ -375,54 +375,8 @@
 
 .stat-item {
   text-align: center;
-  padding: 2.5rem 1.5rem;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   animation: fadeInUp 1s ease both;
-}
-
-.stat-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.6s ease;
-}
-
-.stat-item:hover::before {
-  left: 100%;
-}
-
-.stat-item:hover {
-  transform: translateY(-10px) scale(1.05);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.stat-icon {
-  margin-bottom: 1.5rem;
-  position: relative;
-  display: inline-block;
-}
-
-.stat-image {
-  width: 60px;
-  height: 60px;
-  object-fit: contain;
-  transition: all 0.3s ease;
-}
-
-.stat-item:hover .stat-image {
-  transform: scale(1.1);
+  padding: 1rem;
 }
 
 .stat-number {
@@ -434,40 +388,13 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  transition: all 0.3s ease;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.stat-item:hover .stat-number {
-  font-size: 4rem;
-  background: linear-gradient(45deg, #ffffff, #f0f9ff, #dbeafe);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
 }
 
 .stat-label {
   font-size: 1.2rem;
   opacity: 0.9;
   font-weight: 300;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 1px;
 }
-
-.stat-item:hover .stat-label {
-  opacity: 1;
-  font-weight: 400;
-  color: #f8fafc;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-/* Staggered animation for stat items */
-.stat-item:nth-child(1) { animation-delay: 0s; }
-.stat-item:nth-child(2) { animation-delay: 0.2s; }
-.stat-item:nth-child(3) { animation-delay: 0.4s; }
-.stat-item:nth-child(4) { animation-delay: 0.6s; }
 
 /* Scroll Animations */
 .animate-on-scroll {
@@ -517,26 +444,8 @@
     padding: 3rem 0;
   }
   
-  .stat-item {
-    padding: 2rem 1rem;
-    margin-bottom: 2rem;
-  }
-  
-  .stat-image {
-    width: 50px;
-    height: 50px;
-  }
-  
   .stat-number {
     font-size: 2.5rem;
-  }
-  
-  .stat-item:hover .stat-number {
-    font-size: 2.8rem;
-  }
-  
-  .stat-label {
-    font-size: 1rem;
   }
 }
 
