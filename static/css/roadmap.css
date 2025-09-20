@@ -1,0 +1,100 @@
+/* General Roadmap Styling */
+.roadmap-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.roadmap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Node Styling */
+.node {
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 20px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.node:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.topic-node {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    font-size: 1.3em;
+    cursor: pointer;
+}
+
+.sub-topic-node {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    font-size: 1em;
+}
+
+/* Structure and Lines */
+.roadmap-topic {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.sub-topics {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+    padding-top: 40px; /* Space for connecting lines */
+}
+
+.roadmap-sub-topic {
+    position: relative;
+    margin: 0 15px 20px 15px;
+}
+
+/* Vertical Connector from Topic to Sub-Topics */
+.roadmap-topic::after {
+    content: '';
+    position: absolute;
+    top: 60px; /* Adjust based on node height */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 40px;
+    background-color: #ccc;
+}
+
+/* Horizontal Line for Sub-Topics */
+.sub-topics::before {
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background-color: #ccc;
+}
+
+/* Vertical Connectors from Sub-Topics to the Horizontal Line */
+.roadmap-sub-topic::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 20px; /* Height of the line connecting to the node */
+    background-color: #ccc;
+}

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Test History | ShastraBytes{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Test History for {{ user_name }}</h3>
+                </div>
+                <div class="card-body">
+                    {% if results %}
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Python Score</th>
+                                        <th>C++ Score</th>
+                                        <th>Total Score</th>
+                                        <th>Percentage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for result in results %}
+                                        <tr>
+                                            <td>{{ result.test_date }}</td>
+                                            <td>{{ result.python_score }}/10</td>
+                                            <td>{{ result.cpp_score }}/10</td>
+                                            <td>{{ result.total_score }}/20</td>
+                                            <td>{{ "%.1f"|format(result.percentage) }}%</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info text-center">
+                            You have not completed any tests yet. <a href="{{ url_for('test') }}" class="alert-link">Take one now!</a>
+                        </div>
+                    {% endif %}
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Back to Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

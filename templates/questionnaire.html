@@ -34,14 +34,14 @@
                 <div class="form-group">
                     <div class="option-cards">
                         <label class="option-card">
-                            <input type="radio" name="role" value="student" required>
+                            <input type="radio" name="role" value="student" {% if preferences and preferences.role == 'student' %}checked{% endif %} required>
                             <div class="card-content">
                                 <h3>Student</h3>
                                 <p>Currently pursuing education</p>
                             </div>
                         </label>
                         <label class="option-card">
-                            <input type="radio" name="role" value="developer">
+                            <input type="radio" name="role" value="developer" {% if preferences and preferences.role == 'developer' %}checked{% endif %}>
                             <div class="card-content">
                                 <h3>Developer</h3>
                                 <p>Professional experience in tech</p>
@@ -57,37 +57,37 @@
                 <div class="form-group">
                     <div class="option-cards company-cards">
                         <label class="option-card">
-                            <input type="radio" name="company" value="meta" required>
+                            <input type="radio" name="company" value="meta" {% if preferences and preferences.target_company == 'meta' %}checked{% endif %} required>
                             <div class="card-content">
                                 <h3>Meta</h3>
                             </div>
                         </label>
                         <label class="option-card">
-                            <input type="radio" name="company" value="apple">
+                            <input type="radio" name="company" value="apple" {% if preferences and preferences.target_company == 'apple' %}checked{% endif %}>
                             <div class="card-content">
                                 <h3>Apple</h3>
                             </div>
                         </label>
                         <label class="option-card">
-                            <input type="radio" name="company" value="amazon">
+                            <input type="radio" name="company" value="amazon" {% if preferences and preferences.target_company == 'amazon' %}checked{% endif %}>
                             <div class="card-content">
                                 <h3>Amazon</h3>
                             </div>
                         </label>
                         <label class="option-card">
-                            <input type="radio" name="company" value="netflix">
+                            <input type="radio" name="company" value="netflix" {% if preferences and preferences.target_company == 'netflix' %}checked{% endif %}>
                             <div class="card-content">
                                 <h3>Netflix</h3>
                             </div>
                         </label>
                         <label class="option-card">
-                            <input type="radio" name="company" value="google">
+                            <input type="radio" name="company" value="google" {% if preferences and preferences.target_company == 'google' %}checked{% endif %}>
                             <div class="card-content">
                                 <h3>Google</h3>
                             </div>
                         </label>
                         <label class="option-card">
-                            <input type="radio" name="company" value="microsoft">
+                            <input type="radio" name="company" value="microsoft" {% if preferences and preferences.target_company == 'microsoft' %}checked{% endif %}>
                             <div class="card-content">
                                 <h3>Microsoft</h3>
                             </div>
@@ -102,37 +102,37 @@
                 <div class="form-group">
                     <div class="option-cards role-cards">
                         <label class="option-card">
-                            <input type="radio" name="position" value="software_engineer" required>
+                            <input type="radio" name="position" value="software_engineer" {% if preferences and preferences.position == 'software_engineer' %}checked{% endif %} required>
                             <div class="card-content">
                                 <h3>Software Engineer</h3>
                             </div>
                         </label>
                         <label class="option-card">
-                            <input type="radio" name="position" value="data_scientist">
+                            <input type="radio" name="position" value="data_scientist" {% if preferences and preferences.position == 'data_scientist' %}checked{% endif %}>
                             <div class="card-content">
                                 <h3>Data Scientist</h3>
                             </div>
                         </label>
                         <label class="option-card">
-                            <input type="radio" name="position" value="ml_engineer">
+                            <input type="radio" name="position" value="ml_engineer" {% if preferences and preferences.position == 'ml_engineer' %}checked{% endif %}>
                             <div class="card-content">
                                 <h3>ML Engineer</h3>
                             </div>
                         </label>
                         <label class="option-card">
-                            <input type="radio" name="position" value="frontend_developer">
+                            <input type="radio" name="position" value="frontend_developer" {% if preferences and preferences.position == 'frontend_developer' %}checked{% endif %}>
                             <div class="card-content">
                                 <h3>Frontend Developer</h3>
                             </div>
                         </label>
                         <label class="option-card">
-                            <input type="radio" name="position" value="backend_developer">
+                            <input type="radio" name="position" value="backend_developer" {% if preferences and preferences.position == 'backend_developer' %}checked{% endif %}>
                             <div class="card-content">
                                 <h3>Backend Developer</h3>
                             </div>
                         </label>
                         <label class="option-card">
-                            <input type="radio" name="position" value="devops_engineer">
+                            <input type="radio" name="position" value="devops_engineer" {% if preferences and preferences.position == 'devops_engineer' %}checked{% endif %}>
                             <div class="card-content">
                                 <h3>DevOps Engineer</h3>
                             </div>
@@ -147,31 +147,31 @@
                 <div class="form-group">
                     <div class="option-cards skill-cards">
                         <label class="option-card">
-                            <input type="checkbox" name="skills" value="python">
+                            <input type="checkbox" name="skills" value="python" {% if preferences and 'python' in preferences.previous_skills %}checked{% endif %}>
                             <div class="card-content">
                                 <h3>Python</h3>
                             </div>
                         </label>
                         <label class="option-card">
-                            <input type="checkbox" name="skills" value="cpp">
+                            <input type="checkbox" name="skills" value="cpp" {% if preferences and 'cpp' in preferences.previous_skills %}checked{% endif %}>
                             <div class="card-content">
                                 <h3>C/C++</h3>
                             </div>
                         </label>
                         <label class="option-card">
-                            <input type="checkbox" name="skills" value="java">
+                            <input type="checkbox" name="skills" value="java" {% if preferences and 'java' in preferences.previous_skills %}checked{% endif %}>
                             <div class="card-content">
                                 <h3>Java</h3>
                             </div>
                         </label>
                         <label class="option-card">
-                            <input type="checkbox" name="skills" value="webdev">
+                            <input type="checkbox" name="skills" value="webdev" {% if preferences and 'webdev' in preferences.previous_skills %}checked{% endif %}>
                             <div class="card-content">
                                 <h3>Web Development</h3>
                             </div>
                         </label>
                         <label class="option-card">
-                            <input type="checkbox" name="skills" value="javascript">
+                            <input type="checkbox" name="skills" value="javascript" {% if preferences and 'javascript' in preferences.previous_skills %}checked{% endif %}>
                             <div class="card-content">
                                 <h3>JavaScript</h3>
                             </div>
@@ -186,37 +186,37 @@
                 <div class="form-group">
                     <div class="option-cards specialization-cards">
                         <label class="option-card">
-                            <input type="radio" name="specialization" value="web_development" required>
+                            <input type="radio" name="specialization" value="web_development" {% if preferences and preferences.specialization == 'web_development' %}checked{% endif %} required>
                             <div class="card-content">
                                 <h3>Web Development</h3>
                             </div>
                         </label>
                         <label class="option-card">
-                            <input type="radio" name="specialization" value="mobile_development">
+                            <input type="radio" name="specialization" value="mobile_development" {% if preferences and preferences.specialization == 'mobile_development' %}checked{% endif %}>
                             <div class="card-content">
                                 <h3>Mobile Development</h3>
                             </div>
                         </label>
                         <label class="option-card">
-                            <input type="radio" name="specialization" value="machine_learning">
+                            <input type="radio" name="specialization" value="machine_learning" {% if preferences and preferences.specialization == 'machine_learning' %}checked{% endif %}>
                             <div class="card-content">
                                 <h3>Machine Learning</h3>
                             </div>
                         </label>
                         <label class="option-card">
-                            <input type="radio" name="specialization" value="data_science">
+                            <input type="radio" name="specialization" value="data_science" {% if preferences and preferences.specialization == 'data_science' %}checked{% endif %}>
                             <div class="card-content">
                                 <h3>Data Science</h3>
                             </div>
                         </label>
                         <label class="option-card">
-                            <input type="radio" name="specialization" value="cloud_computing">
+                            <input type="radio" name="specialization" value="cloud_computing" {% if preferences and preferences.specialization == 'cloud_computing' %}checked{% endif %}>
                             <div class="card-content">
                                 <h3>Cloud Computing</h3>
                             </div>
                         </label>
                         <label class="option-card">
-                            <input type="radio" name="specialization" value="cybersecurity">
+                            <input type="radio" name="specialization" value="cybersecurity" {% if preferences and preferences.specialization == 'cybersecurity' %}checked{% endif %}>
                             <div class="card-content">
                                 <h3>Cybersecurity</h3>
                             </div>
@@ -231,14 +231,14 @@
                 <div class="form-group">
                     <div class="option-cards">
                         <label class="option-card">
-                            <input type="radio" name="skill_focus" value="soft_skills" required>
+                            <input type="radio" name="skill_focus" value="soft_skills" {% if preferences and preferences.skill_focus == 'soft_skills' %}checked{% endif %} required>
                             <div class="card-content">
                                 <h3>Soft Skills</h3>
                                 <p>Communication, Leadership, Team Management</p>
                             </div>
                         </label>
                         <label class="option-card">
-                            <input type="radio" name="skill_focus" value="hard_skills">
+                            <input type="radio" name="skill_focus" value="hard_skills" {% if preferences and preferences.skill_focus == 'hard_skills' %}checked{% endif %}>
                             <div class="card-content">
                                 <h3>Hard Skills</h3>
                                 <p>Technical Skills, Programming, Architecture</p>

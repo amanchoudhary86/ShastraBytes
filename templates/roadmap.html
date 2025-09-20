@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Roadmap: {{ roadmap_name.replace('-', ' ').title() }}{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/roadmap.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="roadmap-container">
+        <h1 class="text-center mb-4">{{ roadmap_name.replace('-', ' ').title() }} Roadmap</h1>
+
+        {% if roadmap_data and roadmap_data.nodes %}
+            <div class="roadmap">
+                {% for node in roadmap_data.nodes %}
+                    {% if node.type == 'topic' %}
+                        <div class="roadmap-topic">
+                            <div class="node topic-node">{{ node.data.label }}</div>
+                            {% set topic_id = node.id %}
+                            
+                            <div class="sub-topics">
+                                {% for edge in roadmap_data.edges %}
+                                    {% if edge.source == topic_id %}
+                                        {% for sub_node in roadmap_data.nodes %}
+                                            {% if sub_node.id == edge.target %}
+                                                <div class="roadmap-sub-topic">
+                                                    <div class="node sub-topic-node">{{ sub_node.data.label }}</div>
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center">Roadmap data not available.</p>
+        {% endif %}
+    </div>
+{% endblock %}
