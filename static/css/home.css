@@ -241,6 +241,36 @@
   background: var(--dark-bg);
 }
 
+.features-section h2 {
+  color: var(--text-primary-light);
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.dark-mode .features-section h2 {
+  color: var(--text-primary-dark);
+}
+
+.features-section .lead {
+  color: #64748b;
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 4rem;
+}
+
+.dark-mode .features-section .lead {
+  color: var(--text-secondary-dark);
+}
+
+.features-subtitle {
+  color: #64748b !important;
+  font-weight: 500 !important;
+}
+
+.dark-mode .features-subtitle {
+  color: var(--text-secondary-dark) !important;
+}
+
 .feature-card {
   background: var(--light-card);
   border-radius: 25px;
