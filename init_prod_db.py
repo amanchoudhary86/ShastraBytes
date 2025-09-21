@@ -12,8 +12,7 @@ Usage:
 import os
 import sys
 
-import psycopg2
-from psycopg2 import sql
+import psycopg
 
 
 def init_production_db():
@@ -32,7 +31,7 @@ def init_production_db():
     try:
         print("🔗 Connecting to Neon PostgreSQL database...")
         print(f"📡 Host: {database_url.split('@')[1].split('/')[0] if '@' in database_url else 'Hidden'}")
-        conn = psycopg2.connect(database_url)
+        conn = psycopg.connect(database_url)
         cursor = conn.cursor()
         
         print("📋 Creating users table...")

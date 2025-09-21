@@ -13,8 +13,8 @@ from roadmap_generator import roadmap_generator
 
 # Import PostgreSQL adapter for Vercel
 try:
-    import psycopg2
-    import psycopg2.extras
+    import psycopg
+    from psycopg.rows import dict_row
     POSTGRES_AVAILABLE = True
 except ImportError:
     POSTGRES_AVAILABLE = False
@@ -40,9 +40,9 @@ def get_db():
                 print("PostgreSQL adapter not available")
                 return None
             
-            conn = psycopg2.connect(
+            conn = psycopg.connect(
                 app.config['DATABASE_URL'],
-                cursor_factory=psycopg2.extras.RealDictCursor
+                row_factory=dict_row
             )
             return conn
     except Exception as e:
@@ -116,7 +116,7 @@ def init_db():
                 print("PostgreSQL not available or DATABASE_URL not set")
                 return
                 
-            conn = psycopg2.connect(app.config['DATABASE_URL'])
+            conn = psycopg.connect(app.config['DATABASE_URL'])
             cursor = conn.cursor()
             
             cursor.execute('''
