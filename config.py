@@ -1,3 +1,4 @@
+import json
 import os
 
 from dotenv import load_dotenv
@@ -11,19 +12,19 @@ class Config:
     # Security
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
     
-    # Database - Check if we're on Vercel
+    # Firebase Configuration - Check if we're on Vercel
     if os.environ.get('VERCEL'):
-        # On Vercel - use Neon PostgreSQL connection string
-        DATABASE_URL = os.environ.get('DATABASE_URL') or os.environ.get('POSTGRES_URL')
+        # On Vercel - use Firebase
+        FIREBASE_PROJECT_ID = os.environ.get('FIREBASE_PROJECT_ID')
+        FIREBASE_PRIVATE_KEY = os.environ.get('FIREBASE_PRIVATE_KEY', '').replace('\\n', '\n')
+        FIREBASE_CLIENT_EMAIL = os.environ.get('FIREBASE_CLIENT_EMAIL')
+        USE_FIREBASE = True
         USE_SQLITE = False
-        
-        # Neon-specific optimizations
-        DATABASE_POOL_SIZE = int(os.environ.get('DATABASE_POOL_SIZE', '5'))
-        DATABASE_MAX_OVERFLOW = int(os.environ.get('DATABASE_MAX_OVERFLOW', '10'))
     else:
-        # Local development - use SQLite
+        # Local development - can use SQLite or Firebase
         DATABASE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'users.db')
         USE_SQLITE = True
+        USE_FIREBASE = False
     
     # Application settings
     DEBUG = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'

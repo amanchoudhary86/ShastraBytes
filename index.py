@@ -11,7 +11,14 @@ from config import config
 from enhanced_roadmap_generator import enhanced_roadmap_generator
 from roadmap_generator import roadmap_generator
 
-# Import PostgreSQL adapter for Vercel
+# Import Firebase for Vercel
+try:
+    from firebase_db import FirebaseDB, initialize_firebase
+    FIREBASE_AVAILABLE = True
+except ImportError:
+    FIREBASE_AVAILABLE = False
+
+# Import PostgreSQL adapter (fallback)
 try:
     import psycopg
     from psycopg.rows import dict_row
@@ -24,6 +31,13 @@ app = Flask(__name__)
 # Load configuration
 config_name = os.environ.get('FLASK_ENV', 'default')
 app.config.from_object(config[config_name])
+
+# Initialize Firebase if using it
+if app.config.get('USE_FIREBASE') and FIREBASE_AVAILABLE:
+    initialize_firebase()
+    firebase_db = FirebaseDB()
+else:
+    firebase_db = None
 
 # --- Database Functions ---
 def get_db():
@@ -355,7 +369,7 @@ def login():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    """Signup route with improved validation"""
+    """Signup route with Firebase/SQLite support"""
     if request.method == 'POST':
         username = request.form.get('username', '').strip()
         email = request.form.get('email', '').strip()
@@ -372,44 +386,72 @@ def signup():
             flash('Password must be at least 6 characters long', 'danger')
             return render_template('signup.html')
         
-        db = get_db()
-        if not db:
-            flash('Database connection error. Please try again.', 'danger')
-            return render_template('signup.html')
-            
         try:
             hashed_password = generate_password_hash(password)
-            cursor = db.cursor()
             
-            if app.config.get('USE_SQLITE', True):
-                # SQLite syntax
-                cursor.execute('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', 
-                             (username, email, hashed_password))
-                new_user_id = cursor.lastrowid
-            else:
-                # PostgreSQL syntax
-                cursor.execute('INSERT INTO users (username, email, password) VALUES (%s, %s, %s) RETURNING id', 
-                             (username, email, hashed_password))
-                new_user_id = cursor.fetchone()['id']
+            if app.config.get('USE_FIREBASE') and firebase_db:
+                # Firebase/Firestore signup
                 
-            db.commit()
-            
-            # Get the new user's ID and log them in
-            session['user_id'] = new_user_id
-            session['user_name'] = username
-            
-            flash('Welcome! Please complete your profile.', 'success')
-            return redirect(url_for('questionnaire'))
+                # Check if user already exists
+                existing_user = firebase_db.get_user_by_email(email)
+                if existing_user:
+                    flash('Email already registered.', 'warning')
+                    return render_template('signup.html')
+                
+                # Create new user
+                user_data = {
+                    'username': username,
+                    'email': email,
+                    'password': hashed_password
+                }
+                
+                new_user_id = firebase_db.create_user(user_data)
+                if new_user_id:
+                    session['user_id'] = new_user_id
+                    session['user_name'] = username
+                    flash('Welcome! Please complete your profile.', 'success')
+                    return redirect(url_for('questionnaire'))
+                else:
+                    flash('Error creating account. Please try again.', 'danger')
+                    return render_template('signup.html')
+                    
+            else:
+                # SQLite/PostgreSQL signup (fallback)
+                db = get_db()
+                if not db:
+                    flash('Database connection error. Please try again.', 'danger')
+                    return render_template('signup.html')
+                
+                cursor = db.cursor()
+                
+                if app.config.get('USE_SQLITE', True):
+                    # SQLite syntax
+                    cursor.execute('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', 
+                                 (username, email, hashed_password))
+                    new_user_id = cursor.lastrowid
+                else:
+                    # PostgreSQL syntax
+                    cursor.execute('INSERT INTO users (username, email, password) VALUES (%s, %s, %s) RETURNING id', 
+                                 (username, email, hashed_password))
+                    new_user_id = cursor.fetchone()['id']
+                    
+                db.commit()
+                db.close()
+                
+                # Get the new user's ID and log them in
+                session['user_id'] = new_user_id
+                session['user_name'] = username
+                
+                flash('Welcome! Please complete your profile.', 'success')
+                return redirect(url_for('questionnaire'))
             
         except Exception as e:
             # Handle both SQLite IntegrityError and PostgreSQL UniqueViolation
-            if 'UNIQUE constraint failed' in str(e) or 'duplicate key' in str(e):
+            if 'UNIQUE constraint failed' in str(e) or 'duplicate key' in str(e) or 'already exists' in str(e):
                 flash('Email already registered.', 'warning')
             else:
                 print(f"Signup database error: {e}")
                 flash('Database error. Please try again.', 'danger')
-        finally:
-            db.close()
             
     return render_template('signup.html')
 
