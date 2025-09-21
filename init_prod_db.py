@@ -12,7 +12,20 @@ Usage:
 import os
 import sys
 
-import psycopg
+try:
+    import psycopg2
+    PSYCOPG_VERSION = 2
+except ImportError:
+    try:
+        import psycopg
+        PSYCOPG_VERSION = 3
+    except ImportError:
+        print("❌ Neither psycopg2 nor psycopg is available!")
+        print("Please install one of them:")
+        print("  pip install psycopg2-binary")
+        print("  OR")
+        print("  pip install psycopg[binary]")
+        sys.exit(1)
 
 
 def init_production_db():
@@ -31,7 +44,7 @@ def init_production_db():
     try:
         print("🔗 Connecting to Neon PostgreSQL database...")
         print(f"📡 Host: {database_url.split('@')[1].split('/')[0] if '@' in database_url else 'Hidden'}")
-        conn = psycopg.connect(database_url)
+        conn = psycopg2.connect(database_url) if PSYCOPG_VERSION == 2 else psycopg.connect(database_url)
         cursor = conn.cursor()
         
         print("📋 Creating users table...")

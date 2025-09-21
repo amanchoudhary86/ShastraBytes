@@ -48,4 +48,7 @@ config = {
     'default': DevelopmentConfig
 }
 
+# Set DATABASE_URL for production
+os.environ['DATABASE_URL'] = 'postgresql://neondb_owner:npg_eCI7HuNS8gsZ@ep-bitter-surf-adwhxu0u-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require'
+
 
