@@ -13,9 +13,13 @@ class Config:
     
     # Database - Check if we're on Vercel
     if os.environ.get('VERCEL'):
-        # On Vercel - use PostgreSQL connection string
-        DATABASE_URL = os.environ.get('POSTGRES_URL') or os.environ.get('DATABASE_URL')
+        # On Vercel - use Neon PostgreSQL connection string
+        DATABASE_URL = os.environ.get('DATABASE_URL') or os.environ.get('POSTGRES_URL')
         USE_SQLITE = False
+        
+        # Neon-specific optimizations
+        DATABASE_POOL_SIZE = int(os.environ.get('DATABASE_POOL_SIZE', '5'))
+        DATABASE_MAX_OVERFLOW = int(os.environ.get('DATABASE_MAX_OVERFLOW', '10'))
     else:
         # Local development - use SQLite
         DATABASE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'users.db')
