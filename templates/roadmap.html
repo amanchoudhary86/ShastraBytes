@@ -1,42 +1,368 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block title %}Roadmap: {{ roadmap_name.replace('-', ' ').title() }}{% endblock %}
+{% block title %}Learning Roadmap - ShastraBytes{% endblock %}
 
-{% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/roadmap.css') }}">
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/roadmap.css') }}">
+<style>
+    /* Additional roadmap-specific styles */
+    .roadmap-hero {
+        background: linear-gradient(135deg, #00d4ff, #4ecdc4);
+        color: white;
+        padding: 4rem 0;
+        text-align: center;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .roadmap-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .roadmap-hero h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .roadmap-hero p {
+        font-size: 1.2rem;
+        opacity: 0.95;
+        max-width: 600px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+    }
+
+    .roadmap-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .stat-card {
+        background: var(--roadmap-card);
+        border-radius: 16px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: var(--roadmap-shadow);
+        border: 1px solid rgba(0, 212, 255, 0.2);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #00d4ff, #4ecdc4);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--roadmap-shadow-hover);
+    }
+
+    .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        color: #00d4ff;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--roadmap-text);
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        color: var(--roadmap-text-light);
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .dark-mode .stat-card {
+        background: var(--roadmap-card);
+        border-color: rgba(0, 212, 255, 0.3);
+        box-shadow: var(--roadmap-shadow);
+    }
+
+    .dark-mode .stat-value {
+        color: var(--roadmap-text);
+    }
+
+    .dark-mode .stat-label {
+        color: var(--roadmap-text-light);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/roadmap.js') }}"></script>
 {% endblock %}
 
 {% block content %}
-    <div class="roadmap-container">
-        <h1 class="text-center mb-4">{{ roadmap_name.replace('-', ' ').title() }} Roadmap</h1>
+<!-- Progress Bar -->
+<div class="roadmap-progress">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
 
-        {% if roadmap_data and roadmap_data.nodes %}
-            <div class="roadmap">
-                {% for node in roadmap_data.nodes %}
-                    {% if node.type == 'topic' %}
-                        <div class="roadmap-topic">
-                            <div class="node topic-node">{{ node.data.label }}</div>
-                            {% set topic_id = node.id %}
+<!-- Hero Section -->
+<div class="roadmap-hero">
+    <div class="container">
+        <h1>🚀 Your Learning Roadmap</h1>
+        <p>Follow this personalized path to master your chosen technology stack</p>
+    </div>
+</div>
+
+<div class="roadmap-container">
+    {% if user_roadmap %}
+        <!-- Roadmap Stats -->
+        <div class="roadmap-stats">
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-value">{{ user_roadmap.timeline.total_weeks }}</div>
+                <div class="stat-label">Weeks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📚</div>
+                <div class="stat-value">{{ user_roadmap.progress.total_topics }}</div>
+                <div class="stat-label">Topics</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-value">{{ user_roadmap.user_info.skill_level }}</div>
+                <div class="stat-label">Level</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⚡</div>
+                <div class="stat-value">{{ user_roadmap.progress.completion_percentage }}%</div>
+                <div class="stat-label">Complete</div>
+            </div>
+        </div>
+
+        <!-- Roadmap Timeline -->
+        <div class="roadmap-timeline">
+            {% for phase in user_roadmap.phases %}
+            <div class="roadmap-phase" style="animation-delay: {{ loop.index0 * 0.2 }}s">
+                <div class="phase-connector"></div>
+                <div class="phase-content">
+                    <div class="phase-header">
+                        <h3 class="phase-title">
+                            <div class="phase-icon">
+                                {% if loop.index == 1 %}📚
+                                {% elif loop.index == 2 %}⚡
+                                {% elif loop.index == 3 %}🚀
+                                {% else %}🎯
+                                {% endif %}
+                            </div>
+                            {{ phase.name }}
+                        </h3>
+                        <span class="phase-duration">Weeks {{ phase.start_week }}-{{ phase.end_week }}</span>
+                    </div>
+                    
+                    <div class="phase-description">
+                        Master the {{ phase.name.lower() }} concepts and build a strong foundation for your learning journey.
+                    </div>
+
+                    <div class="topics-grid">
+                        {% for topic in phase.topics %}
+                        <div class="topic-card" onclick="toggleTopicDetails('{{ topic.id }}')">
+                            <div class="topic-title">{{ topic.title }}</div>
+                            <div class="topic-meta">
+                                <span class="topic-hours">{{ topic.estimated_hours }}h</span>
+                                <span class="topic-status {{ topic.status }}">{{ topic.status }}</span>
+                            </div>
                             
-                            <div class="sub-topics">
-                                {% for edge in roadmap_data.edges %}
-                                    {% if edge.source == topic_id %}
-                                        {% for sub_node in roadmap_data.nodes %}
-                                            {% if sub_node.id == edge.target %}
-                                                <div class="roadmap-sub-topic">
-                                                    <div class="node sub-topic-node">{{ sub_node.data.label }}</div>
-                                                </div>
-                                            {% endif %}
+                            <!-- Topic Details (Hidden by default) -->
+                            <div class="topic-details" id="details-{{ topic.id }}" style="display: none;">
+                                <div class="mt-3">
+                                    <h6>Resources:</h6>
+                                    <ul class="list-unstyled">
+                                        {% for resource in topic.resources %}
+                                        <li class="mb-1">
+                                            <i class="fas fa-{{ 'book' if resource.type == 'Book' else 'play-circle' if resource.type == 'Course' else 'code' if resource.type == 'Practice' else 'file-alt' }} me-2"></i>
+                                            {{ resource.name }} - {{ resource.platform }}
+                                        </li>
                                         {% endfor %}
-                                    {% endif %}
-                                {% endfor %}
+                                    </ul>
+                                    
+                                    <h6 class="mt-3">Milestones:</h6>
+                                    <ul class="list-unstyled">
+                                        {% for milestone in topic.milestones %}
+                                        <li class="mb-1">
+                                            <i class="fas fa-check-circle me-2 text-success"></i>
+                                            {{ milestone }}
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
                             </div>
                         </div>
-                    {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Reference Section -->
+        <div class="reference-section">
+            <h4 class="reference-title">📖 Reference: {{ user_roadmap.reference.description }}</h4>
+            <p>This roadmap is based on industry best practices and references from {{ user_roadmap.reference.source }}</p>
+            <div class="areas-tags">
+                {% for area in user_roadmap.reference.key_areas %}
+                <span class="area-tag">{{ area }}</span>
                 {% endfor %}
             </div>
-        {% else %}
-            <p class="text-center">Roadmap data not available.</p>
-        {% endif %}
-    </div>
+            <div class="mt-3">
+                <a href="{{ user_roadmap.reference.url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-external-link-alt me-1"></i>
+                    View on roadmap.sh
+                </a>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="text-center mt-4">
+            <button class="btn btn-success me-3" onclick="updateProgress()">
+                <i class="fas fa-check me-2"></i>
+                Mark as Complete
+            </button>
+            <button class="btn btn-outline-primary me-3" onclick="regenerateRoadmap()">
+                <i class="fas fa-sync-alt me-2"></i>
+                Regenerate
+            </button>
+            <button class="btn btn-outline-secondary" onclick="saveRoadmap()">
+                <i class="fas fa-save me-2"></i>
+                Save Progress
+            </button>
+        </div>
+
+    {% else %}
+        <!-- No Roadmap State -->
+        <div class="text-center py-5">
+            <div class="roadmap-loading">
+                <div class="loading-dots">
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                </div>
+            </div>
+            <h3>No Roadmap Found</h3>
+            <p class="text-muted">Please complete your profile to generate a personalized learning roadmap.</p>
+            <a href="/questionnaire" class="btn btn-primary">
+                <i class="fas fa-user-edit me-2"></i>
+                Complete Profile
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+// Progress tracking
+function updateProgressBar() {
+    const phases = document.querySelectorAll('.roadmap-phase');
+    const completedPhases = document.querySelectorAll('.roadmap-phase .topic-status.completed').length;
+    const totalPhases = phases.length;
+    const progress = (completedPhases / totalPhases) * 100;
+    
+    document.getElementById('progressBar').style.width = progress + '%';
+}
+
+// Toggle topic details
+function toggleTopicDetails(topicId) {
+    const details = document.getElementById('details-' + topicId);
+    if (details.style.display === 'none') {
+        details.style.display = 'block';
+    } else {
+        details.style.display = 'none';
+    }
+}
+
+// Update progress
+function updateProgress() {
+    // This would typically make an AJAX call to update progress
+    alert('Progress updated! This feature will be implemented in the backend.');
+}
+
+// Regenerate roadmap
+function regenerateRoadmap() {
+    if (confirm('Are you sure you want to regenerate your roadmap? This will create a new learning path.')) {
+        window.location.href = '/regenerate-roadmap';
+    }
+}
+
+// Save roadmap
+function saveRoadmap() {
+    // This would typically make an AJAX call to save progress
+    alert('Roadmap saved! This feature will be implemented in the backend.');
+}
+
+// Intersection Observer for animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateX(0)';
+        }
+    });
+}, observerOptions);
+
+// Observe all roadmap phases
+document.addEventListener('DOMContentLoaded', function() {
+    const phases = document.querySelectorAll('.roadmap-phase');
+    phases.forEach(phase => {
+        observer.observe(phase);
+    });
+    
+    // Initialize progress bar
+    updateProgressBar();
+    
+    // Add hover effects to topic cards
+    const topicCards = document.querySelectorAll('.topic-card');
+    topicCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+        });
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+});
+
+// Smooth scrolling for better UX
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
 {% endblock %}

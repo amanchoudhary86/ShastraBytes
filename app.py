@@ -1,142 +1,300 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, Blueprint
-import sqlite3, os, json, random
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+import sqlite3
+import os
+import json
+import random
 from werkzeug.security import generate_password_hash, check_password_hash
+from config import config
+from roadmap_generator import roadmap_generator
+from enhanced_roadmap_generator import enhanced_roadmap_generator
 
 app = Flask(__name__)
-app.secret_key = 'supersecretkeynew'
 
-# Create a Blueprint for roadmap related routes
-roadmap_bp = Blueprint('roadmap_bp', __name__)
-
-@roadmap_bp.route('/roadmap/<roadmap_name>')
-def show_roadmap(roadmap_name):
-    # Construct the path to the roadmap JSON file
-    # Assuming roadmap_repo is cloned at the project root
-    roadmap_file_path = f'/run/media/pranav/New Volume/projects/ShastraBytes/roadmap_repo/src/data/roadmaps/{roadmap_name}/{roadmap_name}.json'
-    
-    roadmap_data = None
-    try:
-        with open(roadmap_file_path, 'r') as f:
-            roadmap_data = json.load(f)
-                
-    except FileNotFoundError:
-        print(f"Roadmap file not found: {roadmap_file_path}")
-    except json.JSONDecodeError:
-        print(f"Error decoding JSON from: {roadmap_file_path}")
-        
-    return render_template('roadmap.html', roadmap_name=roadmap_name, roadmap_data=roadmap_data)
-
-# Register the blueprint with the main Flask app instance
-app.register_blueprint(roadmap_bp)
+# Load configuration
+config_name = os.environ.get('FLASK_ENV', 'default')
+app.config.from_object(config[config_name])
 
 # --- Database Functions ---
 def get_db():
-    conn = sqlite3.connect('users.db')
-    conn.row_factory = sqlite3.Row
-    return conn
+    """Get database connection with proper error handling"""
+    try:
+        conn = sqlite3.connect(app.config['DATABASE_PATH'])
+        conn.row_factory = sqlite3.Row
+        return conn
+    except sqlite3.Error as e:
+        print(f"Database connection error: {e}")
+        return None
 
 def init_db():
-    if not os.path.exists("users.db"):
-        conn = sqlite3.connect("users.db")
+    """Initialize database with proper error handling"""
+    try:
+        # Create users table
+        conn = sqlite3.connect(app.config['DATABASE_PATH'])
         cursor = conn.cursor()
+        
         cursor.execute('''
-            CREATE TABLE users (
+            CREATE TABLE IF NOT EXISTS users (
                id INTEGER PRIMARY KEY, 
                username TEXT NOT NULL, 
                email TEXT UNIQUE NOT NULL, 
                password TEXT NOT NULL
             )
         ''')
+        
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS user_preferences (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                user_name TEXT NOT NULL,
+                role TEXT NOT NULL,
+                target_company TEXT NOT NULL,
+                position TEXT NOT NULL,
+                previous_skills TEXT NOT NULL,
+                specialization TEXT NOT NULL,
+                skill_focus TEXT NOT NULL,
+                FOREIGN KEY (user_id) REFERENCES users (id)
+            )
+        ''')
+        
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS test_results (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                user_name TEXT NOT NULL,
+                python_score INTEGER DEFAULT 0,
+                cpp_score INTEGER DEFAULT 0,
+                total_score INTEGER NOT NULL,
+                percentage REAL NOT NULL,
+                test_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users (id)
+            )
+        ''')
+        
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS user_roadmaps (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                roadmap_data TEXT NOT NULL,
+                created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users (id)
+            )
+        ''')
+        
         conn.commit()
         conn.close()
-
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS user_preferences (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            user_name TEXT NOT NULL,
-            role TEXT NOT NULL,
-            target_company TEXT NOT NULL,
-            position TEXT NOT NULL,
-            previous_skills TEXT NOT NULL,
-            specialization TEXT NOT NULL,
-            skill_focus TEXT NOT NULL,
-            FOREIGN KEY (user_id) REFERENCES users (id)
-        )
-    ''')
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS test_results (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            user_name TEXT NOT NULL,
-            python_score INTEGER DEFAULT 0,
-            cpp_score INTEGER DEFAULT 0,
-            total_score INTEGER NOT NULL,
-            percentage REAL NOT NULL,
-            test_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users (id)
-        )
-    ''')
-    db.commit()
-    db.close()
+        print("Database initialized successfully")
+        
+    except sqlite3.Error as e:
+        print(f"Database initialization error: {e}")
 
 # --- Helper Functions ---
 def calculate_profile_completion(user_id):
+    """Calculate user profile completion percentage"""
     db = get_db()
-    user_prefs = db.execute('SELECT * FROM user_preferences WHERE user_id = ?', (user_id,)).fetchone()
-    db.close()
-    if not user_prefs: return 0
-    
-    fields = ['role', 'target_company', 'position', 'previous_skills', 'specialization', 'skill_focus']
-    filled_fields = sum(1 for field in fields if user_prefs[field])
-    return int((filled_fields / len(fields)) * 100)
+    if not db:
+        return 0
+        
+    try:
+        user_prefs = db.execute('SELECT * FROM user_preferences WHERE user_id = ?', (user_id,)).fetchone()
+        if not user_prefs:
+            return 0
+        
+        fields = ['role', 'target_company', 'position', 'previous_skills', 'specialization', 'skill_focus']
+        filled_fields = sum(1 for field in fields if user_prefs[field])
+        return int((filled_fields / len(fields)) * 100)
+    except sqlite3.Error as e:
+        print(f"Error calculating profile completion: {e}")
+        return 0
+    finally:
+        db.close()
 
 def get_latest_test_result(user_id):
+    """Get user's latest test result"""
     db = get_db()
-    result = db.execute('SELECT * FROM test_results WHERE user_id = ? ORDER BY test_date DESC LIMIT 1', (user_id,)).fetchone()
-    db.close()
-    return result
+    if not db:
+        return None
+        
+    try:
+        result = db.execute('SELECT * FROM test_results WHERE user_id = ? ORDER BY test_date DESC LIMIT 1', (user_id,)).fetchone()
+        return result
+    except sqlite3.Error as e:
+        print(f"Error getting latest test result: {e}")
+        return None
+    finally:
+        db.close()
 
 def get_all_test_results(user_id):
+    """Get all test results for a user"""
     db = get_db()
-    results = db.execute('SELECT * FROM test_results WHERE user_id = ? ORDER BY test_date DESC', (user_id,)).fetchall()
-    db.close()
-    return results
+    if not db:
+        return []
+        
+    try:
+        results = db.execute('SELECT * FROM test_results WHERE user_id = ? ORDER BY test_date DESC', (user_id,)).fetchall()
+        return results
+    except sqlite3.Error as e:
+        print(f"Error getting test results: {e}")
+        return []
+    finally:
+        db.close()
+
+def get_user_roadmap(user_id):
+    """Get user's personalized roadmap"""
+    db = get_db()
+    if not db:
+        return None
+        
+    try:
+        result = db.execute('SELECT roadmap_data FROM user_roadmaps WHERE user_id = ? ORDER BY updated_date DESC LIMIT 1', (user_id,)).fetchone()
+        if result:
+            return json.loads(result['roadmap_data'])
+        return None
+    except (sqlite3.Error, json.JSONDecodeError) as e:
+        print(f"Error getting user roadmap: {e}")
+        return None
+    finally:
+        db.close()
+
+def save_user_roadmap(user_id, roadmap_data):
+    """Save or update user's roadmap"""
+    db = get_db()
+    if not db:
+        return False
+        
+    try:
+        # Check if roadmap exists
+        existing = db.execute('SELECT id FROM user_roadmaps WHERE user_id = ?', (user_id,)).fetchone()
+        
+        if existing:
+            # Update existing roadmap
+            db.execute('''
+                UPDATE user_roadmaps 
+                SET roadmap_data = ?, updated_date = CURRENT_TIMESTAMP 
+                WHERE user_id = ?
+            ''', (json.dumps(roadmap_data), user_id))
+        else:
+            # Create new roadmap
+            db.execute('''
+                INSERT INTO user_roadmaps (user_id, roadmap_data) 
+                VALUES (?, ?)
+            ''', (user_id, json.dumps(roadmap_data)))
+        
+        db.commit()
+        return True
+    except (sqlite3.Error, json.JSONEncodeError) as e:
+        print(f"Error saving user roadmap: {e}")
+        return False
+    finally:
+        db.close()
+
+def generate_user_roadmap(user_id):
+    """Generate a new roadmap for user based on their preferences"""
+    db = get_db()
+    if not db:
+        return None
+        
+    try:
+        # Get user preferences
+        prefs = db.execute('SELECT * FROM user_preferences WHERE user_id = ?', (user_id,)).fetchone()
+        if not prefs:
+            return None
+        
+        # Convert preferences to dict
+        preferences = dict(prefs)
+        
+        # Generate enhanced roadmap
+        roadmap = enhanced_roadmap_generator.generate_enhanced_roadmap(preferences)
+        
+        # Save roadmap
+        if save_user_roadmap(user_id, roadmap):
+            return roadmap
+        return None
+        
+    except sqlite3.Error as e:
+        print(f"Error generating user roadmap: {e}")
+        return None
+    finally:
+        db.close()
+
+def validate_form_data(form_data, required_fields):
+    """Validate form data"""
+    errors = []
+    for field in required_fields:
+        if not form_data.get(field) or not form_data.get(field).strip():
+            errors.append(f"{field.replace('_', ' ').title()} is required")
+    return errors
 
 # --- Routes ---
 @app.route('/')
 @app.route('/home')
 def home():
+    """Home page route"""
     return render_template('home.html', user_name=session.get('user_name'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """Login route with improved error handling"""
     if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '')
+        
+        # Basic validation
+        if not email or not password:
+            flash('Please fill in all fields', 'danger')
+            return render_template('login.html')
+        
         db = get_db()
-        user = db.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
-        db.close()
-        if user and check_password_hash(user['password'], password):
-            session['user_id'] = user['id']
-            session['user_name'] = user['username']
-            return redirect(url_for('dashboard'))
-        else:
-            flash('Invalid credentials', 'danger')
+        if not db:
+            flash('Database connection error. Please try again.', 'danger')
+            return render_template('login.html')
+            
+        try:
+            user = db.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
+            if user and check_password_hash(user['password'], password):
+                session['user_id'] = user['id']
+                session['user_name'] = user['username']
+                flash('Login successful!', 'success')
+                return redirect(url_for('dashboard'))
+            else:
+                flash('Invalid credentials', 'danger')
+        except sqlite3.Error as e:
+            print(f"Login database error: {e}")
+            flash('Database error. Please try again.', 'danger')
+        finally:
+            db.close()
+            
     return render_template('login.html')
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    """Signup route with improved validation"""
     if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
-        password = generate_password_hash(request.form['password'])
+        username = request.form.get('username', '').strip()
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '')
+        
+        # Validation
+        errors = validate_form_data(request.form, ['username', 'email', 'password'])
+        if errors:
+            for error in errors:
+                flash(error, 'danger')
+            return render_template('signup.html')
+        
+        if len(password) < 6:
+            flash('Password must be at least 6 characters long', 'danger')
+            return render_template('signup.html')
+        
         db = get_db()
-        cursor = db.cursor()
+        if not db:
+            flash('Database connection error. Please try again.', 'danger')
+            return render_template('signup.html')
+            
         try:
-            cursor.execute('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', (username, email, password))
+            hashed_password = generate_password_hash(password)
+            cursor = db.cursor()
+            cursor.execute('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', 
+                         (username, email, hashed_password))
             db.commit()
             
             # Get the new user's ID and log them in
@@ -149,7 +307,9 @@ def signup():
             
         except sqlite3.IntegrityError:
             flash('Email already registered.', 'warning')
-            return redirect(url_for('signup'))
+        except sqlite3.Error as e:
+            print(f"Signup database error: {e}")
+            flash('Database error. Please try again.', 'danger')
         finally:
             db.close()
             
@@ -157,78 +317,84 @@ def signup():
 
 @app.route('/about')
 def about():
+    """About page route"""
     return render_template('about.html', user_name=session.get('user_name'))
 
 @app.route('/dashboard')
 def dashboard():
+    """Dashboard route with improved error handling"""
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
     user_id = session['user_id']
     
-    profile_completion = calculate_profile_completion(user_id)
-    latest_test_result = get_latest_test_result(user_id)
-    
-    db = get_db()
-    user_prefs = db.execute('SELECT specialization FROM user_preferences WHERE user_id = ?', (user_id,)).fetchone()
-    db.close()
-    
-    user_specialization_roadmap_name = None
-    if user_prefs:
-        user_specialization = user_prefs['specialization']
-        roadmap_mapping = {
-            "Machine Learning": "machine-learning",
-            "Data Science": "ai-data-scientist",
-            "CyberSecurity": "cyber-security",
-            "Web Development": "frontend",
-            "Cloud Computing": "aws"
-        }
-        user_specialization_roadmap_name = roadmap_mapping.get(user_specialization)
-
-    roadmap_data = {}
-    if user_specialization_roadmap_name:
-        roadmap_file_path = os.path.join('roadmap_repo', 'src', 'data', 'roadmaps', user_specialization_roadmap_name, f"{user_specialization_roadmap_name}.json")
-        try:
-            with open(roadmap_file_path, 'r') as f:
-                roadmap_data = json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError):
-            # Handle cases where the roadmap file is missing or invalid
-            pass
-
-    return render_template('DefaultDashboard.html',
-                           user_name=session['user_name'],
-                           profile_completion=profile_completion,
-                           latest_test_result=latest_test_result,
-                           user_specialization_roadmap_name=user_specialization_roadmap_name,
-                           roadmap_data=roadmap_data)
+    try:
+        profile_completion = calculate_profile_completion(user_id)
+        latest_test_result = get_latest_test_result(user_id)
+        
+        # Get or generate user roadmap
+        user_roadmap = get_user_roadmap(user_id)
+        if not user_roadmap and profile_completion > 0:
+            # Generate roadmap if user has completed profile but no roadmap exists
+            user_roadmap = generate_user_roadmap(user_id)
+        
+        return render_template('DefaultDashboard_fixed.html',
+                               user_name=session['user_name'],
+                               profile_completion=profile_completion,
+                               latest_test_result=latest_test_result,
+                               user_roadmap=user_roadmap)
+    except Exception as e:
+        print(f"Dashboard error: {e}")
+        flash('Error loading dashboard. Please try again.', 'danger')
+        return redirect(url_for('home'))
 
 @app.route('/test_history')
 def test_history():
+    """Test history route"""
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
-    results = get_all_test_results(session['user_id'])
-    return render_template('test_history.html', 
-                           user_name=session['user_name'], 
-                           results=results)
+    try:
+        results = get_all_test_results(session['user_id'])
+        return render_template('test_history.html', 
+                               user_name=session['user_name'], 
+                               results=results)
+    except Exception as e:
+        print(f"Test history error: {e}")
+        flash('Error loading test history.', 'danger')
+        return redirect(url_for('dashboard'))
 
 @app.route('/test')
 def test():
+    """Test route with improved error handling"""
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
     try:
+        # Check if question files exist
+        python_file = 'python_mcqs.json'
+        cpp_file = 'cpp_mcqs.json'
+        
+        if not os.path.exists(python_file) or not os.path.exists(cpp_file):
+            flash('Test questions not available. Please contact administrator.', 'danger')
+            return redirect(url_for('dashboard'))
+        
         # Load Python questions
-        with open('python_mcqs.json', 'r', encoding='utf-8') as f:
+        with open(python_file, 'r', encoding='utf-8') as f:
             python_questions = json.load(f)
             for q in python_questions:
                 q['topic'] = 'python'
         
         # Load C++ questions
-        with open('cpp_mcqs.json', 'r', encoding='utf-8') as f:
+        with open(cpp_file, 'r', encoding='utf-8') as f:
             cpp_questions = json.load(f)
             for q in cpp_questions:
                 q['topic'] = 'cpp'
+
+        # Validate we have enough questions
+        if len(python_questions) < 10 or len(cpp_questions) < 10:
+            flash('Not enough questions available for testing.', 'danger')
+            return redirect(url_for('dashboard'))
 
         # Select 10 random questions from each topic
         selected_python = random.sample(python_questions, 10)
@@ -242,10 +408,17 @@ def test():
         session['test_questions'] = final_questions
         
     except FileNotFoundError as e:
-        flash(f"Error: {e.filename} not found.", 'danger')
+        flash(f"Test file not found: {e.filename}", 'danger')
         return redirect(url_for('dashboard'))
-    except (json.JSONDecodeError, ValueError) as e:
-        flash("Error reading or sampling questions. Please check the JSON files.", 'danger')
+    except json.JSONDecodeError as e:
+        flash("Error reading test questions. Please contact administrator.", 'danger')
+        return redirect(url_for('dashboard'))
+    except ValueError as e:
+        flash("Not enough questions available for testing.", 'danger')
+        return redirect(url_for('dashboard'))
+    except Exception as e:
+        print(f"Test loading error: {e}")
+        flash("Error loading test. Please try again.", 'danger')
         return redirect(url_for('dashboard'))
 
     return render_template('test.html', 
@@ -254,6 +427,7 @@ def test():
 
 @app.route('/submit_test', methods=['POST'])
 def submit_test():
+    """Submit test route with improved error handling"""
     if 'user_id' not in session or 'test_questions' not in session:
         flash('Your session has expired. Please start the test again.', 'warning')
         return redirect(url_for('test'))
@@ -263,45 +437,54 @@ def submit_test():
         flash('No questions found in your session. Please start the test again.', 'warning')
         return redirect(url_for('test'))
 
-    python_score = 0
-    cpp_score = 0
-    
-    for i, question in enumerate(questions):
-        user_answer = request.form.get(f'q{i}')
-        if user_answer and user_answer == question['answer']:
-            if question['topic'] == 'python':
-                python_score += 1
-            elif question['topic'] == 'cpp':
-                cpp_score += 1
-    
-    total_score = python_score + cpp_score
-    total_questions = len(questions)
-    percentage = (total_score / total_questions) * 100 if total_questions > 0 else 0
-    
     try:
+        python_score = 0
+        cpp_score = 0
+        
+        for i, question in enumerate(questions):
+            user_answer = request.form.get(f'q{i}')
+            if user_answer and user_answer == question['answer']:
+                if question['topic'] == 'python':
+                    python_score += 1
+                elif question['topic'] == 'cpp':
+                    cpp_score += 1
+        
+        total_score = python_score + cpp_score
+        total_questions = len(questions)
+        percentage = (total_score / total_questions) * 100 if total_questions > 0 else 0
+        
+        # Save to database
         db = get_db()
-        db.execute('''
-            INSERT INTO test_results (user_id, user_name, python_score, cpp_score, total_score, percentage)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ''', (session['user_id'], session['user_name'], python_score, cpp_score, total_score, percentage))
-        db.commit()
-    except sqlite3.Error as e:
-        flash(f"Database error: {e}", 'danger')
-    finally:
         if db:
-            db.close()
-    
-    session.pop('test_questions', None)
-    
-    flash('Test submitted successfully!', 'success')
-    return redirect(url_for('test_result', 
-                           python_score=python_score,
-                           cpp_score=cpp_score,
-                           total_score=total_score,
-                           percentage=round(percentage, 2)))
+            try:
+                db.execute('''
+                    INSERT INTO test_results (user_id, user_name, python_score, cpp_score, total_score, percentage)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                ''', (session['user_id'], session['user_name'], python_score, cpp_score, total_score, percentage))
+                db.commit()
+            except sqlite3.Error as e:
+                print(f"Database error saving test result: {e}")
+                flash('Error saving test result.', 'danger')
+            finally:
+                db.close()
+        
+        session.pop('test_questions', None)
+        
+        flash('Test submitted successfully!', 'success')
+        return redirect(url_for('test_result', 
+                               python_score=python_score,
+                               cpp_score=cpp_score,
+                               total_score=total_score,
+                               percentage=round(percentage, 2)))
+                               
+    except Exception as e:
+        print(f"Test submission error: {e}")
+        flash('Error submitting test. Please try again.', 'danger')
+        return redirect(url_for('test'))
 
 @app.route('/test_result')
 def test_result():
+    """Test result route with improved validation"""
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
@@ -310,6 +493,12 @@ def test_result():
         cpp_score = request.args.get('cpp_score', 0, type=int)
         total_score = request.args.get('total_score', 0, type=int)
         percentage = request.args.get('percentage', 0, type=float)
+        
+        # Validate scores
+        if python_score < 0 or cpp_score < 0 or total_score < 0 or percentage < 0:
+            flash('Invalid test result data.', 'danger')
+            return redirect(url_for('dashboard'))
+            
     except (ValueError, TypeError):
         flash('Invalid test result data.', 'danger')
         return redirect(url_for('dashboard'))
@@ -323,64 +512,353 @@ def test_result():
 
 @app.route('/questionnaire', methods=['GET', 'POST'])
 def questionnaire():
+    """Questionnaire route with improved validation"""
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
     db = get_db()
-    
-    if request.method == 'POST':
-        # Data from the form
-        role = request.form.get('role')
-        target_company = request.form.get('company')
-        position = request.form.get('position')
-        previous_skills = ','.join(request.form.getlist('skills'))
-        specialization = request.form.get('specialization')
-        skill_focus = request.form.get('skill_focus')
-
-        # Check if preferences already exist
-        existing_prefs = db.execute('SELECT id FROM user_preferences WHERE user_id = ?', (session['user_id'],)).fetchone()
-
-        if existing_prefs:
-            # Update existing preferences
-            db.execute('''
-                UPDATE user_preferences
-                SET role = ?, target_company = ?, position = ?, previous_skills = ?, specialization = ?, skill_focus = ?
-                WHERE user_id = ?
-            ''', (role, target_company, position, previous_skills, specialization, skill_focus, session['user_id']))
-            flash('Profile updated successfully!', 'success')
-        else:
-            # Insert new preferences
-            db.execute('''
-                INSERT INTO user_preferences 
-                (user_id, user_name, role, target_company, position, previous_skills, specialization, skill_focus)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (session['user_id'], session['user_name'], role, target_company, position, previous_skills, specialization, skill_focus))
-            flash('Profile saved successfully!', 'success')
-        
-        db.commit()
-        db.close()
+    if not db:
+        flash('Database connection error. Please try again.', 'danger')
         return redirect(url_for('dashboard'))
-
-    # For GET request, fetch existing preferences
-    prefs = db.execute('SELECT * FROM user_preferences WHERE user_id = ?', (session['user_id'],)).fetchone()
-    db.close()
     
-    # The 'previous_skills' are stored as a comma-separated string, so we split it for the template
-    if prefs and prefs['previous_skills']:
-        # Create a mutable copy of the row object
-        prefs_dict = dict(prefs)
-        prefs_dict['previous_skills'] = prefs_dict['previous_skills'].split(',')
-        prefs = prefs_dict
+    try:
+        if request.method == 'POST':
+            # Get and validate form data
+            role = request.form.get('role', '').strip()
+            target_company = request.form.get('company', '').strip()
+            position = request.form.get('position', '').strip()
+            previous_skills = ','.join(request.form.getlist('skills'))
+            specialization = request.form.get('specialization', '').strip()
+            skill_focus = request.form.get('skill_focus', '').strip()
 
-    return render_template('questionnaire.html', user_name=session['user_name'], preferences=prefs)
+            # Validate required fields
+            required_fields = ['role', 'company', 'position', 'specialization', 'skill_focus']
+            errors = validate_form_data(request.form, required_fields)
+            
+            if errors:
+                for error in errors:
+                    flash(error, 'danger')
+                return render_template('questionnaire.html', 
+                                     user_name=session['user_name'], 
+                                     preferences=None)
+
+            # Check if preferences already exist
+            existing_prefs = db.execute('SELECT id FROM user_preferences WHERE user_id = ?', (session['user_id'],)).fetchone()
+
+            if existing_prefs:
+                # Update existing preferences
+                db.execute('''
+                    UPDATE user_preferences
+                    SET role = ?, target_company = ?, position = ?, previous_skills = ?, specialization = ?, skill_focus = ?
+                    WHERE user_id = ?
+                ''', (role, target_company, position, previous_skills, specialization, skill_focus, session['user_id']))
+                flash('Profile updated successfully!', 'success')
+            else:
+                # Insert new preferences
+                db.execute('''
+                    INSERT INTO user_preferences 
+                    (user_id, user_name, role, target_company, position, previous_skills, specialization, skill_focus)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (session['user_id'], session['user_name'], role, target_company, position, previous_skills, specialization, skill_focus))
+                flash('Profile saved successfully!', 'success')
+            
+            db.commit()
+            return redirect(url_for('dashboard'))
+
+        # For GET request, fetch existing preferences
+        prefs = db.execute('SELECT * FROM user_preferences WHERE user_id = ?', (session['user_id'],)).fetchone()
+        
+        # The 'previous_skills' are stored as a comma-separated string, so we split it for the template
+        if prefs and prefs['previous_skills']:
+            # Create a mutable copy of the row object
+            prefs_dict = dict(prefs)
+            prefs_dict['previous_skills'] = prefs_dict['previous_skills'].split(',')
+            prefs = prefs_dict
+
+        return render_template('questionnaire.html', 
+                             user_name=session['user_name'], 
+                             preferences=prefs)
+                             
+    except sqlite3.Error as e:
+        print(f"Questionnaire database error: {e}")
+        flash('Database error. Please try again.', 'danger')
+        return redirect(url_for('dashboard'))
+    finally:
+        db.close()
 
 @app.route('/logout')
 def logout():
+    """Logout route"""
     session.clear()
     flash('You have been logged out.', 'info')
     return redirect(url_for('login'))
 
+@app.route('/guidelines')
+def guidelines():
+    """Community guidelines page"""
+    return render_template('guidelines.html', user_name=session.get('user_name'))
+
+@app.route('/contact')
+def contact():
+    """Contact page"""
+    return render_template('contact.html', user_name=session.get('user_name'))
+
+@app.route('/copyright')
+def copyright():
+    """Copyright page"""
+    return render_template('copyright.html', user_name=session.get('user_name'))
+
+@app.route('/terms')
+def terms():
+    """Terms and conditions page"""
+    return render_template('terms.html', user_name=session.get('user_name'))
+
+@app.route('/how-it-works')
+def how_it_works():
+    """How it works page"""
+    return render_template('how_it_works.html', user_name=session.get('user_name'))
+
+@app.route('/roadmap')
+def roadmap_page():
+    """Dedicated roadmap page"""
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    user_id = session['user_id']
+    
+    try:
+        # Get user preferences
+        db = get_db()
+        if not db:
+            flash('Database connection error. Please try again.', 'danger')
+            return redirect(url_for('dashboard'))
+        
+        user_prefs = db.execute('SELECT * FROM user_preferences WHERE user_id = ?', (user_id,)).fetchone()
+        db.close()
+        
+        if not user_prefs:
+            flash('Please complete your profile first to access the roadmap.', 'warning')
+            return redirect(url_for('questionnaire'))
+        
+        # Convert to dict for template
+        preferences = dict(user_prefs)
+        
+        return render_template('roadmap_page.html', 
+                             user_name=session['user_name'],
+                             user_preferences=preferences)
+                             
+    except Exception as e:
+        print(f"Roadmap page error: {e}")
+        flash('Error loading roadmap page. Please try again.', 'danger')
+        return redirect(url_for('dashboard'))
+
+@app.route('/generate-roadmap', methods=['POST'])
+def generate_roadmap_api():
+    """API endpoint to generate roadmap based on user input"""
+    if 'user_id' not in session:
+        return {'error': 'Not authenticated'}, 401
+    
+    user_id = session['user_id']
+    
+    try:
+        # Get form data
+        skill_level = request.form.get('skill_level')
+        duration = int(request.form.get('duration', 8))
+        focus_area = request.form.get('focus_area')
+        learning_goals = request.form.get('learning_goals', '')
+        
+        # Get user preferences
+        db = get_db()
+        if not db:
+            return {'error': 'Database connection error'}, 500
+        
+        user_prefs = db.execute('SELECT * FROM user_preferences WHERE user_id = ?', (user_id,)).fetchone()
+        db.close()
+        
+        if not user_prefs:
+            return {'error': 'User preferences not found'}, 400
+        
+        # Update preferences with new data
+        preferences = dict(user_prefs)
+        preferences['skill_focus'] = skill_level
+        preferences['learning_duration'] = duration
+        preferences['focus_area'] = focus_area
+        preferences['learning_goals'] = learning_goals
+        
+        # Generate enhanced roadmap
+        roadmap = enhanced_roadmap_generator.generate_enhanced_roadmap(preferences)
+        
+        # Save roadmap
+        if save_user_roadmap(user_id, roadmap):
+            return {'success': True, 'roadmap': roadmap}
+        else:
+            return {'error': 'Failed to save roadmap'}, 500
+            
+    except Exception as e:
+        print(f"Roadmap generation error: {e}")
+        return {'error': 'Internal server error'}, 500
+
+@app.route('/regenerate-roadmap', methods=['POST'])
+def regenerate_roadmap():
+    """Regenerate user's roadmap"""
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    user_id = session['user_id']
+    
+    try:
+        # Generate new roadmap
+        new_roadmap = generate_user_roadmap(user_id)
+        if new_roadmap:
+            flash('Your personalized roadmap has been updated!', 'success')
+        else:
+            flash('Error generating roadmap. Please complete your profile first.', 'warning')
+    except Exception as e:
+        print(f"Roadmap regeneration error: {e}")
+        flash('Error regenerating roadmap. Please try again.', 'danger')
+    
+    return redirect(url_for('dashboard'))
+
+@app.route('/accept-roadmap', methods=['POST'])
+def accept_roadmap():
+    """Accept a roadmap and make it active"""
+    if 'user_id' not in session:
+        return {'error': 'Not authenticated'}, 401
+    
+    user_id = session['user_id']
+    
+    try:
+        data = request.get_json()
+        roadmap_data = data.get('roadmap')
+        status = data.get('status', 'accepted')
+        
+        if not roadmap_data:
+            return {'error': 'No roadmap data provided'}, 400
+        
+        # Save the accepted roadmap
+        if save_user_roadmap(user_id, roadmap_data):
+            # Update roadmap status in database
+            db = get_db()
+            if db:
+                try:
+                    db.execute('''
+                        UPDATE user_roadmaps 
+                        SET roadmap_data = ?, updated_date = CURRENT_TIMESTAMP 
+                        WHERE user_id = ?
+                    ''', (json.dumps(roadmap_data), user_id))
+                    db.commit()
+                except sqlite3.Error as e:
+                    print(f"Error updating roadmap status: {e}")
+                finally:
+                    db.close()
+            
+            return {'success': True, 'message': 'Roadmap accepted successfully'}
+        else:
+            return {'error': 'Failed to save roadmap'}, 500
+            
+    except Exception as e:
+        print(f"Accept roadmap error: {e}")
+        return {'error': 'Internal server error'}, 500
+
+@app.route('/save-roadmap-draft', methods=['POST'])
+def save_roadmap_draft():
+    """Save a roadmap as draft"""
+    if 'user_id' not in session:
+        return {'error': 'Not authenticated'}, 401
+    
+    user_id = session['user_id']
+    
+    try:
+        data = request.get_json()
+        roadmap_data = data.get('roadmap')
+        status = data.get('status', 'draft')
+        
+        if not roadmap_data:
+            return {'error': 'No roadmap data provided'}, 400
+        
+        # Save the draft roadmap
+        if save_user_roadmap(user_id, roadmap_data):
+            return {'success': True, 'message': 'Roadmap saved as draft'}
+        else:
+            return {'error': 'Failed to save roadmap'}, 500
+            
+    except Exception as e:
+        print(f"Save roadmap draft error: {e}")
+        return {'error': 'Internal server error'}, 500
+
+@app.route('/update-roadmap-progress', methods=['POST'])
+def update_roadmap_progress():
+    """Update roadmap progress by marking topics as completed"""
+    if 'user_id' not in session:
+        return {'error': 'Not authenticated'}, 401
+    
+    user_id = session['user_id']
+    
+    try:
+        data = request.get_json()
+        completed_topic_id = data.get('topic_id')
+        
+        if not completed_topic_id:
+            return {'error': 'No topic ID provided'}, 400
+        
+        # Get current roadmap
+        roadmap = get_user_roadmap(user_id)
+        if not roadmap:
+            return {'error': 'No roadmap found'}, 404
+        
+        # Update roadmap progress
+        updated_roadmap = enhanced_roadmap_generator.update_progress(roadmap, [completed_topic_id])
+        
+        # Save updated roadmap
+        if save_user_roadmap(user_id, updated_roadmap):
+            return {'success': True, 'roadmap': updated_roadmap}
+        else:
+            return {'error': 'Failed to update roadmap'}, 500
+            
+    except Exception as e:
+        print(f"Update roadmap progress error: {e}")
+        return {'error': 'Internal server error'}, 500
+
+@app.route('/get-roadmap-details', methods=['GET'])
+def get_roadmap_details():
+    """Get detailed roadmap information for a specific phase"""
+    if 'user_id' not in session:
+        return {'error': 'Not authenticated'}, 401
+    
+    user_id = session['user_id']
+    phase_id = request.args.get('phase_id', type=int)
+    
+    try:
+        roadmap = get_user_roadmap(user_id)
+        if not roadmap:
+            return {'error': 'No roadmap found'}, 404
+        
+        if phase_id:
+            # Return specific phase details
+            phase = next((p for p in roadmap['phases'] if p['id'] == phase_id), None)
+            if phase:
+                return {'success': True, 'phase': phase}
+            else:
+                return {'error': 'Phase not found'}, 404
+        else:
+            # Return full roadmap
+            return {'success': True, 'roadmap': roadmap}
+            
+    except Exception as e:
+        print(f"Get roadmap details error: {e}")
+        return {'error': 'Internal server error'}, 500
+
+# Error handlers
+@app.errorhandler(404)
+def not_found_error(error):
+    """Handle 404 errors"""
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    """Handle 500 errors"""
+    return render_template('500.html'), 500
+
 if __name__ == '__main__':
     init_db()
-    app.run(debug=True)
-    
+    app.run(debug=True, use_reloader=False, threaded=True, port=5001)

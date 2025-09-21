@@ -261,95 +261,171 @@
             justify-content: space-between;
             align-items: center;
             gap: 1rem;
-            padding: 0.5rem 0;
+            padding: 2rem 1rem;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .roadmap-path::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><pattern id="road" x="0" y="0" width="100" height="20" patternUnits="userSpaceOnUse"><rect width="100" height="20" fill="%23f8fafc"/><rect x="0" y="8" width="100" height="4" fill="%23e2e8f0"/><rect x="0" y="9" width="100" height="2" fill="%23cbd5e1"/></pattern></defs><rect width="100" height="20" fill="url(%23road)"/></svg>') repeat-x;
+            opacity: 0.3;
+            z-index: 1;
         }
 
         .path-line {
             position: absolute;
             top: 50%;
-            left: 10%;
-            right: 10%;
-            height: 2px;
-            background: rgba(99, 102, 241, 0.2);
-            border-radius: 1px;
-            z-index: 1;
+            left: 8%;
+            right: 8%;
+            height: 8px;
+            background: linear-gradient(90deg, #e2e8f0 0%, #cbd5e1 50%, #e2e8f0 100%);
+            border-radius: 4px;
+            z-index: 2;
             transform: translateY(-50%);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .path-line::before {
             content: '';
             position: absolute;
-            top: -1px;
+            top: -2px;
             left: 0;
-            height: 4px;
-            background: var(--gradient-1);
-            border-radius: 2px;
-            width: 40%; /* Progress indicator */
-            box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
-            animation: pathGlow 3s ease-in-out infinite alternate;
+            height: 12px;
+            background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+            border-radius: 6px;
+            width: var(--progress, 0%);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.6), 0 0 40px rgba(139, 92, 246, 0.4);
+            animation: pathGlow 3s ease-in-out infinite alternate, roadProgress 2s ease-in-out;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .path-line::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: repeating-linear-gradient(90deg, #ffffff 0px, #ffffff 10px, transparent 10px, transparent 20px);
+            border-radius: 1px;
+            z-index: 3;
+            opacity: 0.8;
+            transform: translateY(-50%);
         }
 
         @keyframes pathGlow {
-            from { box-shadow: 0 0 8px rgba(99, 102, 241, 0.4); }
-            to { box-shadow: 0 0 12px rgba(99, 102, 241, 0.6); }
+            0% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.6), 0 0 40px rgba(139, 92, 246, 0.4); }
+            100% { box-shadow: 0 0 30px rgba(99, 102, 241, 0.8), 0 0 60px rgba(139, 92, 246, 0.6); }
+        }
+
+        @keyframes roadProgress {
+            0% { width: 0%; }
+            100% { width: var(--progress, 0%); }
         }
 
         .stage-item {
             position: relative;
-            z-index: 2;
+            z-index: 4;
             text-align: center;
             flex: 1;
             cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 1rem;
+            border-radius: 15px;
+        }
+
+        .stage-item:hover {
+            transform: translateY(-8px) scale(1.05);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
         }
 
         .stage-marker {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
-            margin: 0 auto 0.5rem;
+            margin: 0 auto 0.8rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             font-weight: bold;
             position: relative;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             transform: perspective(1000px) rotateX(0deg);
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2), 0 0 0 4px rgba(255, 255, 255, 0.1);
+        }
+
+        .stage-marker::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s ease;
+            opacity: 0;
+        }
+
+        .stage-marker:hover::before {
+            opacity: 1;
+            animation: shimmer 1.5s ease-in-out;
         }
 
         .stage-marker.completed {
-            background: var(--success-color);
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4), 0 0 0 4px rgba(16, 185, 129, 0.2);
+            animation: successGlow 3s ease-in-out infinite;
         }
 
         .stage-marker.current {
-            background: var(--primary-color);
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
             color: white;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-            animation: currentPulse 2s ease-in-out infinite alternate;
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5), 0 0 0 4px rgba(99, 102, 241, 0.3);
+            animation: currentGlow 2s ease-in-out infinite, bounce 1.5s infinite;
         }
 
         .stage-marker.locked {
-            background: #e5e7eb;
+            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
             color: #9ca3af;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .dark-mode .stage-marker.locked {
-            background: #374151;
+            background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
             color: #6b7280;
         }
 
-        @keyframes currentPulse {
-            from { 
-                box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-                transform: scale(1);
-            }
-            to { 
-                box-shadow: 0 6px 16px rgba(99, 102, 241, 0.5);
-                transform: scale(1.05);
-            }
+        @keyframes currentGlow {
+            0%, 100% { box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5), 0 0 0 4px rgba(99, 102, 241, 0.3); }
+            50% { box-shadow: 0 8px 25px rgba(99, 102, 241, 0.7), 0 0 0 8px rgba(99, 102, 241, 0.5); }
+        }
+
+        @keyframes successGlow {
+            0%, 100% { box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4), 0 0 0 4px rgba(16, 185, 129, 0.2); }
+            50% { box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6), 0 0 0 8px rgba(16, 185, 129, 0.4); }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
         .stage-marker:hover {
@@ -357,11 +433,13 @@
         }
 
         .stage-title {
-            font-size: 0.75rem;
-            font-weight: 600;
+            font-size: 0.9rem;
+            font-weight: 700;
             color: var(--text-primary-light);
             margin: 0;
-            line-height: 1.2;
+            line-height: 1.3;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            letter-spacing: 0.5px;
         }
 
         .dark-mode .stage-title {
@@ -373,17 +451,20 @@
             bottom: 100%;
             left: 50%;
             transform: translateX(-50%);
-            background: var(--dark-card);
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.8) 100%);
             color: white;
-            padding: 0.5rem 0.8rem;
-            border-radius: 8px;
-            font-size: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
             white-space: nowrap;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1000;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.8rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
         }
 
         .stage-tooltip::after {
@@ -392,13 +473,630 @@
             top: 100%;
             left: 50%;
             transform: translateX(-50%);
-            border: 5px solid transparent;
-            border-top-color: var(--dark-card);
+            border: 6px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.9);
         }
 
         .stage-item:hover .stage-tooltip {
             opacity: 1;
             visibility: visible;
+            transform: translateX(-50%) translateY(-5px);
+        }
+
+        /* Road Signs and Decorations */
+        .road-sign {
+            position: absolute;
+            top: -20px;
+            right: 20px;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+            animation: roadSignBounce 2s ease-in-out infinite;
+            z-index: 5;
+        }
+
+        .road-sign::before {
+            content: '🚧';
+            margin-right: 0.3rem;
+        }
+
+        @keyframes roadSignBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* Progress Milestones */
+        .milestone {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+            animation: milestonePulse 3s ease-in-out infinite;
+            z-index: 5;
+        }
+
+        @keyframes milestonePulse {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.1); }
+        }
+
+        /* Road Decorations */
+        .road-decoration {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: repeating-linear-gradient(90deg, #ffffff 0px, #ffffff 5px, transparent 5px, transparent 10px);
+            opacity: 0.6;
+            z-index: 3;
+            transform: translateY(-50%);
+        }
+
+        /* Success Celebration */
+        .celebration {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5rem;
+            animation: celebrationBounce 1s ease-in-out infinite;
+            z-index: 6;
+        }
+
+        @keyframes celebrationBounce {
+            0%, 100% { transform: translateX(-50%) translateY(0) rotate(0deg); }
+            25% { transform: translateX(-50%) translateY(-10px) rotate(-5deg); }
+            75% { transform: translateX(-50%) translateY(-5px) rotate(5deg); }
+        }
+
+        /* Enhanced Roadmap Styling */
+        .enhanced-roadmap {
+            position: relative;
+            min-height: 400px;
+            padding: 2rem 0;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.02) 0%, rgba(168, 85, 247, 0.02) 100%);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .main-road {
+            position: absolute;
+            top: 50%;
+            left: 5%;
+            right: 5%;
+            height: 12px;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        .road-surface {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(90deg, #e2e8f0 0%, #cbd5e1 50%, #e2e8f0 100%);
+            border-radius: 6px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .road-lines {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: repeating-linear-gradient(90deg, #ffffff 0px, #ffffff 20px, transparent 20px, transparent 40px);
+            transform: translateY(-50%);
+            opacity: 0.8;
+        }
+
+        .progress-track {
+            position: absolute;
+            top: -2px;
+            left: 0;
+            height: 16px;
+            background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+            border-radius: 8px;
+            width: var(--progress, 0%);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.6), 0 0 40px rgba(139, 92, 246, 0.4);
+            animation: progressGlow 3s ease-in-out infinite alternate;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes progressGlow {
+            0% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.6), 0 0 40px rgba(139, 92, 246, 0.4); }
+            100% { box-shadow: 0 0 30px rgba(99, 102, 241, 0.8), 0 0 60px rgba(139, 92, 246, 0.6); }
+        }
+
+        .road-signs {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .road-sign {
+            position: absolute;
+            top: 20px;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+            animation: signBounce 2s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .start-sign {
+            left: 2%;
+        }
+
+        .end-sign {
+            right: 2%;
+        }
+
+        .progress-milestone {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+            animation: milestonePulse 3s ease-in-out infinite;
+        }
+
+        @keyframes signBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .phase-node {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 3;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .phase-node:nth-child(3) { left: 10%; }
+        .phase-node:nth-child(4) { left: 30%; }
+        .phase-node:nth-child(5) { left: 50%; }
+        .phase-node:nth-child(6) { left: 70%; }
+        .phase-node:nth-child(7) { left: 90%; }
+
+        .phase-main {
+            position: relative;
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 3px solid var(--phase-color, #6366f1);
+            min-width: 200px;
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+
+        .phase-main:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .phase-icon {
+            font-size: 2rem;
+            color: var(--phase-color, #6366f1);
+            margin-bottom: 0.5rem;
+        }
+
+        .phase-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .phase-progress {
+            position: relative;
+        }
+
+        .progress-ring {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            margin: 0 auto;
+        }
+
+        .progress-ring-svg {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring-circle {
+            stroke: var(--phase-color, #6366f1);
+            stroke-dasharray: 157;
+            stroke-dashoffset: 157;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: var(--phase-color, #6366f1);
+        }
+
+        .phase-branches {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .branch {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .branch-line {
+            width: 2px;
+            height: 20px;
+            background: var(--branch-color, #8b5cf6);
+            border-radius: 1px;
+        }
+
+        .branch-node {
+            background: var(--branch-color, #8b5cf6);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .branch-node:hover {
+            transform: translateX(5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .branch-topics {
+            display: flex;
+            gap: 0.2rem;
+            margin-left: 0.5rem;
+        }
+
+        .topic-dot {
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .topic-dot:hover {
+            background: white;
+            transform: scale(1.2);
+        }
+
+        .topic-more {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: bold;
+        }
+
+        .phase-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.9) 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            min-width: 300px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            margin-bottom: 1rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .phase-node:hover .phase-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-10px);
+        }
+
+        .tooltip-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .tooltip-header h5 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .phase-status {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .phase-status.completed {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .phase-status.current {
+            background: rgba(99, 102, 241, 0.2);
+            color: #6366f1;
+        }
+
+        .phase-status.locked {
+            background: rgba(107, 114, 128, 0.2);
+            color: #6b7280;
+        }
+
+        .phase-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .info-item i {
+            color: var(--phase-color, #6366f1);
+            width: 16px;
+        }
+
+        .subtopics-preview {
+            margin-bottom: 1rem;
+        }
+
+        .subtopics-preview h6 {
+            margin-bottom: 0.5rem;
+            color: #e5e7eb;
+            font-size: 0.9rem;
+        }
+
+        .topic-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .topic-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: #d1d5db;
+        }
+
+        .topic-item i {
+            color: var(--phase-color, #6366f1);
+            font-size: 0.6rem;
+        }
+
+        .tooltip-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .tooltip-actions .btn {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+        }
+
+        /* Phase Status Styling */
+        .phase-node.completed .phase-main {
+            border-color: #10b981;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(16, 185, 129, 0.02) 100%);
+        }
+
+        .phase-node.completed .phase-icon {
+            color: #10b981;
+        }
+
+        .phase-node.current .phase-main {
+            border-color: #6366f1;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(99, 102, 241, 0.02) 100%);
+            animation: currentPhaseGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes currentPhaseGlow {
+            0%, 100% { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); }
+            50% { box-shadow: 0 15px 40px rgba(99, 102, 241, 0.2); }
+        }
+
+        .phase-node.locked .phase-main {
+            border-color: #e5e7eb;
+            background: linear-gradient(135deg, rgba(229, 231, 235, 0.5) 0%, rgba(229, 231, 235, 0.2) 100%);
+            opacity: 0.7;
+        }
+
+        .phase-node.locked .phase-icon {
+            color: #9ca3af;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .enhanced-roadmap {
+                min-height: 350px;
+            }
+            
+            .phase-main {
+                min-width: 180px;
+                padding: 1.2rem;
+            }
+            
+            .phase-tooltip {
+                min-width: 250px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .enhanced-roadmap {
+                min-height: 300px;
+                padding: 1rem 0;
+            }
+            
+            .phase-main {
+                min-width: 150px;
+                padding: 1rem;
+            }
+            
+            .phase-title {
+                font-size: 1rem;
+            }
+            
+            .phase-icon {
+                font-size: 1.5rem;
+            }
+            
+            .phase-tooltip {
+                min-width: 200px;
+                padding: 1rem;
+            }
+            
+            .road-sign {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.6rem;
+            }
+            
+            .progress-milestone {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.6rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .enhanced-roadmap {
+                min-height: 250px;
+            }
+            
+            .phase-main {
+                min-width: 120px;
+                padding: 0.8rem;
+            }
+            
+            .phase-title {
+                font-size: 0.9rem;
+            }
+            
+            .phase-icon {
+                font-size: 1.2rem;
+            }
+            
+            .phase-tooltip {
+                min-width: 180px;
+                padding: 0.8rem;
+            }
+            
+            .road-sign {
+                display: none;
+            }
+        }
+
+        /* Roadmap Stats Styling */
+        .roadmap-stats {
+            margin-top: 2rem;
+        }
+
+        .stat-item {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dark-mode .stat-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary-light);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .dark-mode .stat-label {
+            color: var(--text-secondary-dark);
         }
 
         /* Welcome Popup */
@@ -495,6 +1193,450 @@
                 left: 15%;
                 right: 15%;
             }
+        }
+
+        /* Personalized Roadmap Styles */
+        .info-card {
+            background: var(--light-card);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .info-card {
+            background: var(--dark-card);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .info-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-icon {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .info-content h6 {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary-light);
+        }
+
+        .dark-mode .info-content h6 {
+            color: var(--text-primary-dark);
+        }
+
+        .info-content p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary-light);
+        }
+
+        .dark-mode .info-content p {
+            color: var(--text-secondary-dark);
+        }
+
+        .progress-overview {
+            background: var(--light-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .progress-overview {
+            background: var(--dark-card);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .progress-label {
+            font-weight: 600;
+            color: var(--text-primary-light);
+        }
+
+        .dark-mode .progress-label {
+            color: var(--text-primary-dark);
+        }
+
+        .progress-percentage {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .progress {
+            height: 8px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .dark-mode .progress {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .progress-bar {
+            background: var(--gradient-1);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .phases-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .phase-card {
+            background: var(--light-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .dark-mode .phase-card {
+            background: var(--dark-card);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .phase-card.completed {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .phase-card.current {
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .phase-card.locked {
+            opacity: 0.6;
+            border-left: 4px solid var(--text-secondary-light);
+        }
+
+        .phase-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .phase-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+            color: var(--text-primary-light);
+        }
+
+        .dark-mode .phase-title {
+            color: var(--text-primary-dark);
+        }
+
+        .phase-duration {
+            font-size: 0.9rem;
+            color: var(--text-secondary-light);
+            margin: 0;
+        }
+
+        .dark-mode .phase-duration {
+            color: var(--text-secondary-dark);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-badge.completed {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .status-badge.current {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .status-badge.locked {
+            background: var(--text-secondary-light);
+            color: white;
+        }
+
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .topic-card {
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .dark-mode .topic-card {
+            background: rgba(255, 255, 255, 0.02);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .topic-title {
+            font-weight: 600;
+            margin: 0;
+            color: var(--text-primary-light);
+        }
+
+        .dark-mode .topic-title {
+            color: var(--text-primary-dark);
+        }
+
+        .topic-hours {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .resource-list, .milestone-list {
+            list-style: none;
+            padding: 0;
+            margin: 0.5rem 0 0 0;
+        }
+
+        .resource-list li, .milestone-list li {
+            font-size: 0.85rem;
+            color: var(--text-secondary-light);
+            margin-bottom: 0.25rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .dark-mode .resource-list li, .dark-mode .milestone-list li {
+            color: var(--text-secondary-dark);
+        }
+
+        .resource-list li::before {
+            content: "📚";
+            position: absolute;
+            left: 0;
+        }
+
+        .milestone-list li::before {
+            content: "🎯";
+            position: absolute;
+            left: 0;
+        }
+
+        .no-roadmap {
+            padding: 3rem 2rem;
+        }
+
+        .no-roadmap i {
+            opacity: 0.5;
+        }
+
+        /* Roadmap Card Styles */
+        .roadmap-card {
+            background: var(--light-card);
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .dark-mode .roadmap-card {
+            background: var(--dark-card);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .roadmap-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Phase Topics Styles */
+        .phase-topics {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .topic-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            background: rgba(0, 212, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 212, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .topic-item:hover {
+            background: rgba(0, 212, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .topic-icon {
+            color: #00d4ff;
+            font-size: 0.8rem;
+        }
+
+        .topic-title {
+            flex: 1;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .topic-hours {
+            font-size: 0.8rem;
+            color: #00d4ff;
+            font-weight: 600;
+        }
+
+        .topic-more {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+            padding: 0.5rem;
+        }
+
+        .dark-mode .topic-item {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: rgba(0, 212, 255, 0.2);
+        }
+
+        .dark-mode .topic-item:hover {
+            background: rgba(0, 212, 255, 0.15);
+        }
+
+        .dark-mode .topic-title {
+            color: var(--dark-text-color);
+        }
+
+        .roadmap-icon {
+            margin-bottom: 1rem;
+        }
+
+        .roadmap-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary-light);
+        }
+
+        .dark-mode .roadmap-title {
+            color: var(--text-primary-dark);
+        }
+
+        .roadmap-description {
+            font-size: 1.1rem;
+            color: var(--text-secondary-light);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .dark-mode .roadmap-description {
+            color: var(--text-secondary-dark);
+        }
+
+        .roadmap-features {
+            margin-bottom: 2rem;
+        }
+
+        .feature-item {
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .feature-item i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-item h6 {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary-light);
+        }
+
+        .dark-mode .feature-item h6 {
+            color: var(--text-primary-dark);
+        }
+
+        .feature-item small {
+            color: var(--text-secondary-light);
+        }
+
+        .dark-mode .feature-item small {
+            color: var(--text-secondary-dark);
+        }
+
+        /* Roadmap Reference Styles */
+        .reference-card {
+            background: var(--light-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .dark-mode .reference-card {
+            background: var(--dark-card);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .reference-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .reference-title {
+            font-weight: 600;
+            margin: 0;
+            color: var(--text-primary-light);
+        }
+
+        .dark-mode .reference-title {
+            color: var(--text-primary-dark);
+        }
+
+        .areas-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .area-tag {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
         }
 
         /* Dashboard Content */
@@ -840,7 +1982,7 @@
         <div class="welcome-icon">
             <i class="fas fa-rocket"></i>
         </div>
-        <h3 class="welcome-title">Welcome back, John!</h3>
+        <h3 class="welcome-title">Welcome back, {{ user_name }}!</h3>
         <p class="welcome-message">Ready to continue your journey towards your dream company? Let's make today count!</p>
         <a href="#" class="btn btn-3d btn-primary-3d" id="closeWelcome">
             <i class="fas fa-arrow-right me-2"></i>
@@ -850,66 +1992,186 @@
 
     <!-- Dashboard Content -->
     <div class="container dashboard mt-5 pt-5">
-        <!-- Compact Career Roadmap -->
+        <!-- Dynamic Roadmap Path -->
         <div class="row">
             <div class="col-12">
+                {% if user_roadmap %}
                 <div class="roadmap-section">
                     <h4 class="roadmap-title">
                         <i class="fas fa-route"></i>
-                        Career Progress
+                        Your {{ user_roadmap.user_info.specialization }} Learning Journey
                     </h4>
-                    <div class="roadmap-path">
-                        <div class="path-line"></div>
+                    
+                    <!-- Enhanced Roadmap Visualization -->
+                    <div class="enhanced-roadmap">
+                        <!-- Main Road Path -->
+                        <div class="main-road">
+                            <div class="road-surface"></div>
+                            <div class="road-lines"></div>
+                            <div class="progress-track" style="--progress: {{ (user_roadmap.progress.current_phase / user_roadmap.phases|length) * 100 }}%"></div>
+                        </div>
                         
-                        <div class="stage-item">
-                            <div class="stage-marker completed" data-stage="1">
-                                <i class="fas fa-check"></i>
+                        <!-- Road Signs and Milestones -->
+                        <div class="road-signs">
+                            <div class="road-sign start-sign">
+                                <i class="fas fa-flag-checkered"></i>
+                                <span>Start</span>
                             </div>
-                            <div class="stage-title">Profile</div>
-                            <div class="stage-tooltip">Profile Setup Complete</div>
-                        </div>
-
-                        <div class="stage-item">
-                            <div class="stage-marker completed" data-stage="2">
-                                <i class="fas fa-check"></i>
-                            </div>
-                            <div class="stage-title">Assessment</div>
-                            <div class="stage-tooltip">Skill Assessment Complete</div>
-                        </div>
-
-                        <div class="stage-item">
-                            <div class="stage-marker current" data-stage="3">
-                                <i class="fas fa-play"></i>
-                            </div>
-                            <div class="stage-title">Learning</div>
-                            <div class="stage-tooltip">Learning Path - In Progress</div>
-                        </div>
-
-                        <div class="stage-item">
-                            <div class="stage-marker locked" data-stage="4">
-                                <i class="fas fa-lock"></i>
-                            </div>
-                            <div class="stage-title">Projects</div>
-                            <div class="stage-tooltip">Practice Projects - Locked</div>
-                        </div>
-
-                        <div class="stage-item">
-                            <div class="stage-marker locked" data-stage="5">
-                                <i class="fas fa-lock"></i>
-                            </div>
-                            <div class="stage-title">Interview</div>
-                            <div class="stage-tooltip">Interview Prep - Locked</div>
-                        </div>
-
-                        <div class="stage-item">
-                            <div class="stage-marker locked" data-stage="6">
+                            <div class="road-sign end-sign">
                                 <i class="fas fa-trophy"></i>
+                                <span>Success</span>
                             </div>
-                            <div class="stage-title">Job Ready</div>
-                            <div class="stage-tooltip">Job Ready - Locked</div>
+                            <div class="progress-milestone">
+                                {{ user_roadmap.progress.current_phase }}/{{ user_roadmap.phases|length }} Phases Complete
+                            </div>
+                        </div>
+                        
+                        <!-- Phase Nodes with Branches -->
+                        {% for phase in user_roadmap.phases %}
+                        <div class="phase-node {{ phase.status }}" data-phase="{{ phase.id }}">
+                            <!-- Phase Main Node -->
+                            <div class="phase-main">
+                                <div class="phase-icon">
+                                    <i class="fas fa-{% if loop.index == 1 %}book{% elif loop.index == 2 %}bolt{% elif loop.index == 3 %}rocket{% else %}target{% endif %}"></i>
+                                </div>
+                                <div class="phase-title">{{ phase.name }}</div>
+                                <div class="phase-progress">
+                                    <div class="progress-ring">
+                                        <svg class="progress-ring-svg" width="60" height="60">
+                                            <circle class="progress-ring-circle" cx="30" cy="30" r="25" fill="transparent" stroke="currentColor" stroke-width="4"/>
+                                        </svg>
+                                        <span class="progress-text">{{ phase.topics|length }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Phase Topics -->
+                            <div class="phase-topics">
+                                {% for topic in phase.topics[:3] %}
+                                <div class="topic-item">
+                                    <div class="topic-icon">
+                                        <i class="fas fa-{% if topic.priority == 'high' %}star{% else %}circle{% endif %}"></i>
+                                    </div>
+                                    <div class="topic-title">{{ topic.title }}</div>
+                                    <div class="topic-hours">{{ topic.estimated_hours }}h</div>
+                                </div>
+                                {% endfor %}
+                                {% if phase.topics|length > 3 %}
+                                <div class="topic-more">
+                                    +{{ phase.topics|length - 3 }} more topics
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Phase Details Tooltip -->
+                            <div class="phase-tooltip">
+                                <div class="tooltip-header">
+                                    <h5>{{ phase.name }}</h5>
+                                    <span class="phase-status {{ phase.status }}">
+                                        {% if phase.status == 'completed' %}✓ Completed{% elif phase.status == 'current' %}→ In Progress{% else %}🔒 Locked{% endif %}
+                                    </span>
+                                </div>
+                                <div class="tooltip-content">
+                                    <div class="phase-info">
+                                        <div class="info-item">
+                                            <i class="fas fa-calendar"></i>
+                                            <span>Weeks {{ phase.start_week }}-{{ phase.end_week }}</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <i class="fas fa-book"></i>
+                                            <span>{{ phase.topics|length }} Topics</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <i class="fas fa-clock"></i>
+                                            <span>{{ phase.weeks }} Weeks</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <i class="fas fa-signal"></i>
+                                            <span>Level {{ phase.difficulty }}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="subtopics-preview">
+                                        <h6>Key Topics:</h6>
+                                        <div class="topic-list">
+                                            {% for topic in phase.topics[:5] %}
+                                            <div class="topic-item">
+                                                <i class="fas fa-circle"></i>
+                                                <span>{{ topic.title }}</span>
+                                            </div>
+                                            {% endfor %}
+                                            {% if phase.topics|length > 5 %}
+                                            <div class="topic-item">
+                                                <i class="fas fa-ellipsis-h"></i>
+                                                <span>... and {{ phase.topics|length - 5 }} more</span>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="tooltip-actions">
+                                        <button class="btn btn-sm btn-primary" onclick="explorePhase({{ phase.id }})">
+                                            <i class="fas fa-search"></i> Explore
+                                        </button>
+                                        {% if phase.status == 'current' %}
+                                        <button class="btn btn-sm btn-success" onclick="startPhase({{ phase.id }})">
+                                            <i class="fas fa-play"></i> Start
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Roadmap Progress Stats -->
+                    <div class="roadmap-stats mt-4">
+                        <div class="row text-center">
+                            <div class="col-md-3">
+                                <div class="stat-item">
+                                    <div class="stat-value">{{ user_roadmap.progress.completion_percentage }}%</div>
+                                    <div class="stat-label">Complete</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-item">
+                                    <div class="stat-value">{{ user_roadmap.progress.completed_topics }}</div>
+                                    <div class="stat-label">Topics Done</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-item">
+                                    <div class="stat-value">{{ user_roadmap.timeline.total_weeks }}</div>
+                                    <div class="stat-label">Total Weeks</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-item">
+                                    <div class="stat-value">{{ user_roadmap.user_info.skill_level }}</div>
+                                    <div class="stat-label">Level</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+                {% else %}
+                <div class="roadmap-section">
+                    <h4 class="roadmap-title">
+                        <i class="fas fa-route"></i>
+                        Your Learning Path
+                    </h4>
+                    <div class="text-center py-5">
+                        <i class="fas fa-route fa-3x text-muted mb-3"></i>
+                        <h5>No Roadmap Yet</h5>
+                        <p class="text-muted">Create your personalized learning roadmap to get started!</p>
+                        <a href="{{ url_for('roadmap_page') }}" class="btn btn-primary">
+                            <i class="fas fa-magic me-2"></i>
+                            Create My Roadmap
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
 
@@ -990,20 +2252,66 @@
 
         <!-- Gamified Career Roadmap - Removed from here since it's now at the top -->
 
+        <!-- Roadmap Section -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="roadmap-section text-center">
+                    <div class="roadmap-card">
+                        <div class="roadmap-icon">
+                            <i class="fas fa-route fa-4x text-primary mb-3"></i>
+                        </div>
+                        <h3 class="roadmap-title">Your Personalized Learning Roadmap</h3>
+                        <p class="roadmap-description">
+                            Get a customized learning path tailored to your career goals, skill level, and time commitment.
+                        </p>
+                        <div class="roadmap-features mb-4">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="feature-item">
+                                        <i class="fas fa-cogs text-primary"></i>
+                                        <h6>Customizable</h6>
+                                        <small>Choose your level and duration</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="feature-item">
+                                        <i class="fas fa-chart-line text-success"></i>
+                                        <h6>Progress Tracking</h6>
+                                        <small>Track your learning journey</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="feature-item">
+                                        <i class="fas fa-external-link-alt text-info"></i>
+                                        <h6>Industry Reference</h6>
+                                        <small>Based on roadmap.sh standards</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="{{ url_for('roadmap_page') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-magic me-2"></i>
+                            Create My Roadmap
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Feature Cards -->
         <div class="row">
             <div class="col-md-4 mb-4">
                 <div class="feature-card">
                     <div class="feature-icon">
-                        <i class="fas fa-road"></i>
+                        <i class="fas fa-user-edit"></i>
                     </div>
-                    <h5 class="fw-bold mb-3">Roadmap</h5>
+                    <h5 class="fw-bold mb-3">Profile</h5>
                     <p class="text-muted mb-4">
-                        View and follow your AI-powered career roadmap.
+                        Update your profile and career preferences.
                     </p>
-                    <a href="{{ url_for('roadmap_bp.show_roadmap', roadmap_name=user_specialization_roadmap_name if user_specialization_roadmap_name else 'machine-learning') }}" class="btn btn-3d btn-primary-3d">
+                    <a href="{{ url_for('questionnaire') }}" class="btn btn-3d btn-primary-3d">
                         <i class="fas fa-arrow-right me-2"></i>
-                        View Roadmap
+                        Update Profile
                     </a>
                 </div>
             </div>
@@ -1102,8 +2410,8 @@
             });
         });
 
-        // Function to update roadmap progress
-        function updateRoadmapProgress(currentStage) {
+        // Function to update progress
+        function updateProgress(currentStage) {
             const stages = document.querySelectorAll('.stage-marker');
             const pathProgress = document.querySelector('.path-line::before');
             
@@ -1137,7 +2445,7 @@
         }
 
         // Example: Update to current stage 3
-        updateRoadmapProgress(3);
+        // updateRoadmapProgress(3); // Commented out to prevent automatic calls
 
         // Theme Toggle Functionality
         const themeToggle = document.getElementById('themeToggle');
@@ -1200,6 +2508,485 @@
         // Example usage
         // updateDreamCompany('Microsoft');
         // updateProfileAvatar('John', 'Doe');
+
+        // Enhanced Roadmap Functions
+        function explorePhase(phaseId) {
+            // Show detailed phase information
+            fetch(`/get-roadmap-details?phase_id=${phaseId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showPhaseModal(data.phase);
+                    } else {
+                        alert('Error loading phase details: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while loading phase details.');
+                });
+        }
+
+        function startPhase(phaseId) {
+            // Start a phase
+            fetch('/start-phase', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ phase_id: phaseId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Phase started successfully!');
+                    location.reload();
+                } else {
+                    alert('Error starting phase: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while starting the phase.');
+            });
+        }
+
+        function showPhaseModal(phase) {
+            // Create and show a detailed phase modal
+            const modal = document.createElement('div');
+            modal.className = 'phase-modal';
+            modal.innerHTML = `
+                <div class="modal-overlay" onclick="closePhaseModal()">
+                    <div class="modal-content" onclick="event.stopPropagation()">
+                        <div class="modal-header">
+                            <h3>${phase.name}</h3>
+                            <button class="close-btn" onclick="closePhaseModal()">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="phase-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>Weeks ${phase.start_week}-${phase.end_week}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span>${phase.estimated_hours} Hours</span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-signal"></i>
+                                    <span>Level ${phase.difficulty_level}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="topics-section">
+                                <h4>Topics to Cover</h4>
+                                <div class="topics-grid">
+                                    ${phase.topics.map(topic => `
+                                        <div class="topic-card">
+                                            <h5>${topic}</h5>
+                                            ${phase.subtopics && phase.subtopics[topic] ? `
+                                                <div class="subtopics">
+                                                    <h6>Key Concepts:</h6>
+                                                    <ul>
+                                                        ${phase.subtopics[topic].concepts.map(concept => `<li>${concept}</li>`).join('')}
+                                                    </ul>
+                                                    <h6>Skills to Develop:</h6>
+                                                    <ul>
+                                                        ${phase.subtopics[topic].skills.map(skill => `<li>${skill}</li>`).join('')}
+                                                    </ul>
+                                                    <h6>Tools & Technologies:</h6>
+                                                    <div class="tools-list">
+                                                        ${phase.subtopics[topic].tools.map(tool => `<span class="tool-tag">${tool}</span>`).join('')}
+                                                    </div>
+                                                </div>
+                                            ` : ''}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            
+                            ${phase.branches ? `
+                                <div class="branches-section">
+                                    <h4>Learning Branches</h4>
+                                    <div class="branches-grid">
+                                        ${phase.branches.map(branch => `
+                                            <div class="branch-card" style="--branch-color: ${branch.color}">
+                                                <div class="branch-header">
+                                                    <i class="${branch.icon}"></i>
+                                                    <h5>${branch.name}</h5>
+                                                </div>
+                                                <div class="branch-topics">
+                                                    ${branch.topics.map(topic => `<span class="branch-topic">${topic}</span>`).join('')}
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary" onclick="startPhase(${phase.id})">Start Phase</button>
+                            <button class="btn btn-secondary" onclick="closePhaseModal()">Close</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Add modal styles
+            const style = document.createElement('style');
+            style.textContent = `
+                .phase-modal {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    z-index: 10000;
+                }
+                
+                .modal-overlay {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.8);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 2rem;
+                }
+                
+                .modal-content {
+                    background: white;
+                    border-radius: 20px;
+                    max-width: 800px;
+                    max-height: 90vh;
+                    overflow-y: auto;
+                    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                }
+                
+                .modal-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 1.5rem;
+                    border-bottom: 1px solid #e5e7eb;
+                }
+                
+                .modal-header h3 {
+                    margin: 0;
+                    color: var(--text-primary);
+                }
+                
+                .close-btn {
+                    background: none;
+                    border: none;
+                    font-size: 1.5rem;
+                    cursor: pointer;
+                    color: #6b7280;
+                }
+                
+                .modal-body {
+                    padding: 1.5rem;
+                }
+                
+                .phase-details {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 1rem;
+                    margin-bottom: 2rem;
+                }
+                
+                .detail-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    padding: 0.8rem;
+                    background: #f8fafc;
+                    border-radius: 10px;
+                }
+                
+                .detail-item i {
+                    color: #6366f1;
+                }
+                
+                .topics-section h4,
+                .branches-section h4 {
+                    margin-bottom: 1rem;
+                    color: var(--text-primary);
+                }
+                
+                .topics-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                    gap: 1rem;
+                    margin-bottom: 2rem;
+                }
+                
+                .topic-card {
+                    background: #f8fafc;
+                    padding: 1rem;
+                    border-radius: 10px;
+                    border-left: 4px solid #6366f1;
+                }
+                
+                .topic-card h5 {
+                    margin: 0 0 0.5rem 0;
+                    color: var(--text-primary);
+                }
+                
+                .subtopics h6 {
+                    margin: 0.5rem 0 0.3rem 0;
+                    color: #6b7280;
+                    font-size: 0.9rem;
+                }
+                
+                .subtopics ul {
+                    margin: 0 0 0.5rem 1rem;
+                    padding: 0;
+                }
+                
+                .subtopics li {
+                    font-size: 0.8rem;
+                    color: #6b7280;
+                    margin-bottom: 0.2rem;
+                }
+                
+                .tools-list {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 0.3rem;
+                }
+                
+                .tool-tag {
+                    background: #6366f1;
+                    color: white;
+                    padding: 0.2rem 0.5rem;
+                    border-radius: 15px;
+                    font-size: 0.7rem;
+                }
+                
+                .branches-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                    gap: 1rem;
+                }
+                
+                .branch-card {
+                    background: var(--branch-color, #8b5cf6);
+                    color: white;
+                    padding: 1rem;
+                    border-radius: 10px;
+                }
+                
+                .branch-header {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    margin-bottom: 0.5rem;
+                }
+                
+                .branch-header h5 {
+                    margin: 0;
+                }
+                
+                .branch-topics {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 0.3rem;
+                }
+                
+                .branch-topic {
+                    background: rgba(255, 255, 255, 0.2);
+                    padding: 0.2rem 0.5rem;
+                    border-radius: 15px;
+                    font-size: 0.8rem;
+                }
+                
+                .modal-footer {
+                    padding: 1.5rem;
+                    border-top: 1px solid #e5e7eb;
+                    display: flex;
+                    gap: 1rem;
+                    justify-content: flex-end;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        function closePhaseModal() {
+            const modal = document.querySelector('.phase-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // Roadmap Progress Tracking
+        function updateRoadmapProgress(topicId) {
+            fetch('/update-roadmap-progress', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ topic_id: topicId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update progress without reloading the page
+                    updateProgressDisplay(data.roadmap);
+                    // Close the modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('phaseModal'));
+                    if (modal) {
+                        modal.hide();
+                    }
+                } else {
+                    alert('Error updating progress: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating progress.');
+            });
+        }
+
+        function updateProgressDisplay(roadmap) {
+            // Update progress statistics
+            const completionPercentage = roadmap.progress.completion_percentage;
+            const completedTopics = roadmap.progress.completed_topics;
+            const totalTopics = roadmap.progress.total_topics;
+            const currentPhase = roadmap.progress.current_phase;
+
+            // Update stats display
+            const statValues = document.querySelectorAll('.stat-value');
+            if (statValues.length >= 4) {
+                statValues[0].textContent = completionPercentage + '%';
+                statValues[1].textContent = completedTopics;
+                statValues[2].textContent = roadmap.timeline.total_weeks;
+                statValues[3].textContent = roadmap.user_info.skill_level;
+            }
+
+            // Update progress line
+            const progressLine = document.querySelector('.path-line');
+            if (progressLine) {
+                const progressPercentage = (currentPhase / roadmap.phases.length) * 100;
+                progressLine.style.setProperty('--progress', progressPercentage + '%');
+            }
+
+            // Update phase markers
+            roadmap.phases.forEach((phase, index) => {
+                const stageMarker = document.querySelector(`[data-phase="${phase.id}"] .stage-marker`);
+                if (stageMarker) {
+                    stageMarker.className = `stage-marker ${phase.status}`;
+                    const icon = stageMarker.querySelector('i');
+                    if (icon) {
+                        if (phase.status === 'completed') {
+                            icon.className = 'fas fa-check';
+                        } else if (phase.status === 'current') {
+                            icon.className = 'fas fa-play';
+                        } else {
+                            icon.className = 'fas fa-lock';
+                        }
+                    }
+                }
+            });
+        }
+
+        function showPhaseDetails(phaseId) {
+            fetch(`/get-roadmap-details?phase_id=${phaseId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showPhaseModal(data.phase);
+                } else {
+                    alert('Error loading phase details: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while loading phase details.');
+            });
+        }
+
+        function showPhaseModal(phase) {
+            // Create modal HTML
+            const modalHTML = `
+                <div class="modal fade" id="phaseModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">${phase.name}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <strong>Duration:</strong> Weeks ${phase.start_week}-${phase.end_week}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>Status:</strong> 
+                                        <span class="badge bg-${phase.status === 'completed' ? 'success' : phase.status === 'current' ? 'primary' : 'secondary'}">
+                                            ${phase.status.charAt(0).toUpperCase() + phase.status.slice(1)}
+                                        </span>
+                                    </div>
+                                </div>
+                                <h6>Topics in this phase:</h6>
+                                <div class="row">
+                                    ${phase.topics.map(topic => `
+                                        <div class="col-md-6 mb-3">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h6 class="card-title">${topic.title}</h6>
+                                                    <p class="card-text">
+                                                        <small class="text-muted">${topic.estimated_hours} hours</small>
+                                                    </p>
+                                                    <button class="btn btn-sm btn-outline-success" onclick="markTopicComplete('${topic.id}')">
+                                                        Mark Complete
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing modal if any
+            const existingModal = document.getElementById('phaseModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Add modal to page
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('phaseModal'));
+            modal.show();
+        }
+
+        function markTopicComplete(topicId) {
+            if (confirm('Mark this topic as completed?')) {
+                updateRoadmapProgress(topicId);
+            }
+        }
+
+        // Add click handlers to roadmap phases
+        document.addEventListener('DOMContentLoaded', function() {
+            const stageItems = document.querySelectorAll('.stage-item');
+            stageItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const phaseId = this.dataset.phase;
+                    showPhaseDetails(phaseId);
+                });
+            });
+        });
     </script>
 </body>
 </html>
