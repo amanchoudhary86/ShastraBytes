@@ -1,12 +1,23 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
-import sqlite3
-import os
 import json
+import os
 import random
-from werkzeug.security import generate_password_hash, check_password_hash
+import sqlite3
+
+from flask import (Flask, flash, redirect, render_template, request, session,
+                   url_for)
+from werkzeug.security import check_password_hash, generate_password_hash
+
 from config import config
-from roadmap_generator import roadmap_generator
 from enhanced_roadmap_generator import enhanced_roadmap_generator
+from roadmap_generator import roadmap_generator
+
+# Import PostgreSQL adapter for Vercel
+try:
+    import psycopg2
+    import psycopg2.extras
+    POSTGRES_AVAILABLE = True
+except ImportError:
+    POSTGRES_AVAILABLE = False
 
 app = Flask(__name__)
 
@@ -18,74 +29,150 @@ app.config.from_object(config[config_name])
 def get_db():
     """Get database connection with proper error handling"""
     try:
-        conn = sqlite3.connect(app.config['DATABASE_PATH'])
-        conn.row_factory = sqlite3.Row
-        return conn
-    except sqlite3.Error as e:
+        if app.config.get('USE_SQLITE', True):
+            # SQLite for local development
+            conn = sqlite3.connect(app.config['DATABASE_PATH'])
+            conn.row_factory = sqlite3.Row
+            return conn
+        else:
+            # PostgreSQL for Vercel
+            if not POSTGRES_AVAILABLE:
+                print("PostgreSQL adapter not available")
+                return None
+            
+            conn = psycopg2.connect(
+                app.config['DATABASE_URL'],
+                cursor_factory=psycopg2.extras.RealDictCursor
+            )
+            return conn
+    except Exception as e:
         print(f"Database connection error: {e}")
         return None
 
 def init_db():
-    """Initialize database with proper error handling"""
+    """Initialize database with proper error handling for both SQLite and PostgreSQL"""
     try:
-        # Create users table
-        conn = sqlite3.connect(app.config['DATABASE_PATH'])
-        cursor = conn.cursor()
+        if app.config.get('USE_SQLITE', True):
+            # SQLite initialization for local development
+            conn = sqlite3.connect(app.config['DATABASE_PATH'])
+            cursor = conn.cursor()
+            
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS users (
+                   id INTEGER PRIMARY KEY, 
+                   username TEXT NOT NULL, 
+                   email TEXT UNIQUE NOT NULL, 
+                   password TEXT NOT NULL
+                )
+            ''')
+            
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS user_preferences (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER NOT NULL,
+                    user_name TEXT NOT NULL,
+                    role TEXT NOT NULL,
+                    target_company TEXT NOT NULL,
+                    position TEXT NOT NULL,
+                    previous_skills TEXT NOT NULL,
+                    specialization TEXT NOT NULL,
+                    skill_focus TEXT NOT NULL,
+                    FOREIGN KEY (user_id) REFERENCES users (id)
+                )
+            ''')
+            
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS test_results (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER NOT NULL,
+                    user_name TEXT NOT NULL,
+                    python_score INTEGER DEFAULT 0,
+                    cpp_score INTEGER DEFAULT 0,
+                    total_score INTEGER NOT NULL,
+                    percentage REAL NOT NULL,
+                    test_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users (id)
+                )
+            ''')
+            
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS user_roadmaps (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER NOT NULL,
+                    roadmap_data TEXT NOT NULL,
+                    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users (id)
+                )
+            ''')
+            
+            conn.commit()
+            conn.close()
+            print("SQLite database initialized successfully")
+            
+        else:
+            # PostgreSQL initialization for Vercel
+            if not POSTGRES_AVAILABLE or not app.config.get('DATABASE_URL'):
+                print("PostgreSQL not available or DATABASE_URL not set")
+                return
+                
+            conn = psycopg2.connect(app.config['DATABASE_URL'])
+            cursor = conn.cursor()
+            
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS users (
+                   id SERIAL PRIMARY KEY, 
+                   username VARCHAR(255) NOT NULL, 
+                   email VARCHAR(255) UNIQUE NOT NULL, 
+                   password VARCHAR(255) NOT NULL
+                )
+            ''')
+            
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS user_preferences (
+                    id SERIAL PRIMARY KEY,
+                    user_id INTEGER NOT NULL,
+                    user_name VARCHAR(255) NOT NULL,
+                    role VARCHAR(255) NOT NULL,
+                    target_company VARCHAR(255) NOT NULL,
+                    position VARCHAR(255) NOT NULL,
+                    previous_skills TEXT NOT NULL,
+                    specialization VARCHAR(255) NOT NULL,
+                    skill_focus VARCHAR(255) NOT NULL,
+                    FOREIGN KEY (user_id) REFERENCES users (id)
+                )
+            ''')
+            
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS test_results (
+                    id SERIAL PRIMARY KEY,
+                    user_id INTEGER NOT NULL,
+                    user_name VARCHAR(255) NOT NULL,
+                    python_score INTEGER DEFAULT 0,
+                    cpp_score INTEGER DEFAULT 0,
+                    total_score INTEGER NOT NULL,
+                    percentage REAL NOT NULL,
+                    test_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users (id)
+                )
+            ''')
+            
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS user_roadmaps (
+                    id SERIAL PRIMARY KEY,
+                    user_id INTEGER NOT NULL,
+                    roadmap_data TEXT NOT NULL,
+                    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users (id)
+                )
+            ''')
+            
+            conn.commit()
+            conn.close()
+            print("PostgreSQL database initialized successfully")
         
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS users (
-               id INTEGER PRIMARY KEY, 
-               username TEXT NOT NULL, 
-               email TEXT UNIQUE NOT NULL, 
-               password TEXT NOT NULL
-            )
-        ''')
-        
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS user_preferences (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
-                user_name TEXT NOT NULL,
-                role TEXT NOT NULL,
-                target_company TEXT NOT NULL,
-                position TEXT NOT NULL,
-                previous_skills TEXT NOT NULL,
-                specialization TEXT NOT NULL,
-                skill_focus TEXT NOT NULL,
-                FOREIGN KEY (user_id) REFERENCES users (id)
-            )
-        ''')
-        
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS test_results (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
-                user_name TEXT NOT NULL,
-                python_score INTEGER DEFAULT 0,
-                cpp_score INTEGER DEFAULT 0,
-                total_score INTEGER NOT NULL,
-                percentage REAL NOT NULL,
-                test_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users (id)
-            )
-        ''')
-        
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS user_roadmaps (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
-                roadmap_data TEXT NOT NULL,
-                created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users (id)
-            )
-        ''')
-        
-        conn.commit()
-        conn.close()
-        print("Database initialized successfully")
-        
-    except sqlite3.Error as e:
+    except Exception as e:
         print(f"Database initialization error: {e}")
 
 # --- Helper Functions ---
@@ -293,23 +380,34 @@ def signup():
         try:
             hashed_password = generate_password_hash(password)
             cursor = db.cursor()
-            cursor.execute('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', 
-                         (username, email, hashed_password))
+            
+            if app.config.get('USE_SQLITE', True):
+                # SQLite syntax
+                cursor.execute('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', 
+                             (username, email, hashed_password))
+                new_user_id = cursor.lastrowid
+            else:
+                # PostgreSQL syntax
+                cursor.execute('INSERT INTO users (username, email, password) VALUES (%s, %s, %s) RETURNING id', 
+                             (username, email, hashed_password))
+                new_user_id = cursor.fetchone()['id']
+                
             db.commit()
             
             # Get the new user's ID and log them in
-            new_user_id = cursor.lastrowid
             session['user_id'] = new_user_id
             session['user_name'] = username
             
             flash('Welcome! Please complete your profile.', 'success')
             return redirect(url_for('questionnaire'))
             
-        except sqlite3.IntegrityError:
-            flash('Email already registered.', 'warning')
-        except sqlite3.Error as e:
-            print(f"Signup database error: {e}")
-            flash('Database error. Please try again.', 'danger')
+        except Exception as e:
+            # Handle both SQLite IntegrityError and PostgreSQL UniqueViolation
+            if 'UNIQUE constraint failed' in str(e) or 'duplicate key' in str(e):
+                flash('Email already registered.', 'warning')
+            else:
+                print(f"Signup database error: {e}")
+                flash('Database error. Please try again.', 'danger')
         finally:
             db.close()
             
@@ -860,5 +958,7 @@ def internal_error(error):
     return render_template('500.html'), 500
 
 if __name__ == '__main__':
-    init_db()
+    # Only initialize database for local development
+    if app.config.get('USE_SQLITE', True):
+        init_db()
     app.run(debug=True, use_reloader=False, threaded=True, port=5001)
