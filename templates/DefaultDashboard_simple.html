@@ -1,0 +1,487 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - ShastraBytes{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Dashboard Styles */
+    .dashboard {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem 0;
+    }
+
+    .dashboard-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .dark-mode .dashboard-card {
+        background: rgba(30, 41, 59, 0.95);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .welcome-section {
+        text-align: center;
+        padding: 3rem 0;
+    }
+
+    .welcome-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 1rem;
+    }
+
+    .dark-mode .welcome-title {
+        color: #e2e8f0;
+    }
+
+    .welcome-subtitle {
+        font-size: 1.2rem;
+        color: #718096;
+        margin-bottom: 2rem;
+    }
+
+    .dark-mode .welcome-subtitle {
+        color: #a0aec0;
+    }
+
+    /* Roadmap Section */
+    .roadmap-section {
+        margin: 2rem 0;
+    }
+
+    .roadmap-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .dark-mode .roadmap-title {
+        color: #e2e8f0;
+    }
+
+    .roadmap-timeline {
+        position: relative;
+        padding: 2rem 0;
+    }
+
+    .roadmap-timeline::before {
+        content: '';
+        position: absolute;
+        left: 2rem;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(180deg, #00d4ff, #4ecdc4);
+        border-radius: 2px;
+    }
+
+    .phase-card {
+        position: relative;
+        margin: 2rem 0;
+        margin-left: 4rem;
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #00d4ff;
+        transition: all 0.3s ease;
+    }
+
+    .phase-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .dark-mode .phase-card {
+        background: #1a202c;
+        border-left-color: #00d4ff;
+    }
+
+    .phase-card::before {
+        content: '';
+        position: absolute;
+        left: -3.5rem;
+        top: 1.5rem;
+        width: 20px;
+        height: 20px;
+        background: #00d4ff;
+        border-radius: 50%;
+        border: 4px solid white;
+        box-shadow: 0 0 0 4px #00d4ff;
+    }
+
+    .phase-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .phase-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin: 0;
+    }
+
+    .dark-mode .phase-title {
+        color: #e2e8f0;
+    }
+
+    .phase-duration {
+        background: linear-gradient(135deg, #00d4ff, #4ecdc4);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .phase-description {
+        color: #718096;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+
+    .dark-mode .phase-description {
+        color: #a0aec0;
+    }
+
+    .phase-topics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+
+    .topic-item {
+        background: #f7fafc;
+        border-radius: 10px;
+        padding: 1rem;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+
+    .topic-item:hover {
+        background: #edf2f7;
+        transform: translateY(-2px);
+    }
+
+    .dark-mode .topic-item {
+        background: #2d3748;
+        border-color: #4a5568;
+    }
+
+    .dark-mode .topic-item:hover {
+        background: #4a5568;
+    }
+
+    .topic-title {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+    }
+
+    .dark-mode .topic-title {
+        color: #e2e8f0;
+    }
+
+    .topic-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9rem;
+    }
+
+    .topic-hours {
+        color: #00d4ff;
+        font-weight: 600;
+    }
+
+    .topic-status {
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .topic-status.pending {
+        background: rgba(255, 107, 107, 0.1);
+        color: #ff6b6b;
+    }
+
+    .topic-status.in-progress {
+        background: rgba(255, 211, 61, 0.1);
+        color: #ffd93d;
+    }
+
+    .topic-status.completed {
+        background: rgba(107, 207, 127, 0.1);
+        color: #6bcf7f;
+    }
+
+    .no-roadmap {
+        text-align: center;
+        padding: 3rem;
+        color: #718096;
+    }
+
+    .dark-mode .no-roadmap {
+        color: #a0aec0;
+    }
+
+    .btn-create-roadmap {
+        background: linear-gradient(135deg, #00d4ff, #4ecdc4);
+        border: none;
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 25px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+
+    .btn-create-roadmap:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .dark-mode .stat-card {
+        background: #1a202c;
+        border-color: #4a5568;
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+        color: #00d4ff;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 0.25rem;
+    }
+
+    .dark-mode .stat-value {
+        color: #e2e8f0;
+    }
+
+    .stat-label {
+        color: #718096;
+        font-size: 0.9rem;
+    }
+
+    .dark-mode .stat-label {
+        color: #a0aec0;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .roadmap-timeline::before {
+            left: 1rem;
+        }
+        
+        .phase-card {
+            margin-left: 2.5rem;
+        }
+        
+        .phase-card::before {
+            left: -2rem;
+        }
+        
+        .phase-topics {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h1 class="welcome-title">Welcome back, {{ user_name or 'User' }}! 👋</h1>
+            <p class="welcome-subtitle">Ready to continue your learning journey?</p>
+        </div>
+
+        <!-- Profile Completion -->
+        {% if profile_completion < 100 %}
+        <div class="dashboard-card">
+            <h3>Complete Your Profile</h3>
+            <div class="progress mb-3">
+                <div class="progress-bar" style="width: {{ profile_completion }}%"></div>
+            </div>
+            <p class="text-muted">Complete your profile to get personalized recommendations.</p>
+            <a href="{{ url_for('questionnaire') }}" class="btn btn-primary">Complete Profile</a>
+        </div>
+        {% endif %}
+
+        <!-- Roadmap Section -->
+        <div class="dashboard-card">
+            <h3 class="roadmap-title">
+                <i class="fas fa-route"></i>
+                Your Learning Roadmap
+            </h3>
+            
+            {% if user_roadmap %}
+                <!-- Roadmap Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-value">{{ user_roadmap.timeline.total_weeks }}</div>
+                        <div class="stat-label">Weeks</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📚</div>
+                        <div class="stat-value">{{ user_roadmap.progress.total_topics }}</div>
+                        <div class="stat-label">Topics</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-value">{{ user_roadmap.user_info.skill_level }}</div>
+                        <div class="stat-label">Level</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⚡</div>
+                        <div class="stat-value">{{ user_roadmap.progress.completion_percentage }}%</div>
+                        <div class="stat-label">Complete</div>
+                    </div>
+                </div>
+
+                <!-- Roadmap Timeline -->
+                <div class="roadmap-timeline">
+                    {% for phase in user_roadmap.phases %}
+                    <div class="phase-card">
+                        <div class="phase-header">
+                            <h4 class="phase-title">{{ phase.name }}</h4>
+                            <span class="phase-duration">Weeks {{ phase.start_week }}-{{ phase.end_week }}</span>
+                        </div>
+                        
+                        <div class="phase-description">
+                            Master the {{ phase.name.lower() }} concepts and build a strong foundation for your learning journey.
+                        </div>
+
+                        <div class="phase-topics">
+                            {% for topic in phase.topics %}
+                            <div class="topic-item">
+                                <div class="topic-title">{{ topic.title }}</div>
+                                <div class="topic-meta">
+                                    <span class="topic-hours">{{ topic.estimated_hours }}h</span>
+                                    <span class="topic-status {{ topic.status }}">{{ topic.status }}</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('roadmap_page') }}" class="btn btn-outline-primary me-3">
+                        <i class="fas fa-edit me-2"></i>
+                        Edit Roadmap
+                    </a>
+                    <a href="{{ url_for('test') }}" class="btn btn-primary">
+                        <i class="fas fa-play me-2"></i>
+                        Start Learning
+                    </a>
+                </div>
+
+            {% else %}
+                <div class="no-roadmap">
+                    <i class="fas fa-route fa-3x mb-3"></i>
+                    <h4>No Roadmap Yet</h4>
+                    <p>Create your personalized learning roadmap to get started!</p>
+                    <a href="{{ url_for('roadmap_page') }}" class="btn-create-roadmap">
+                        <i class="fas fa-magic me-2"></i>
+                        Create My Roadmap
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Test Results -->
+        {% if latest_test_result %}
+        <div class="dashboard-card">
+            <h3>Latest Test Results</h3>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon">🐍</div>
+                        <div class="stat-value">{{ latest_test_result.python_score }}</div>
+                        <div class="stat-label">Python</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon">⚙️</div>
+                        <div class="stat-value">{{ latest_test_result.cpp_score }}</div>
+                        <div class="stat-label">C++</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-value">{{ latest_test_result.total_score }}</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-value">{{ latest_test_result.percentage }}%</div>
+                        <div class="stat-label">Score</div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-3">
+                <a href="{{ url_for('test_history') }}" class="btn btn-outline-primary me-3">View History</a>
+                <a href="{{ url_for('test') }}" class="btn btn-primary">Take New Test</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

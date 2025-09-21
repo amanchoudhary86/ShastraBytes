@@ -1,0 +1,991 @@
+{% extends "base.html" %}
+
+{% block title %}Personalized Roadmap - ShastraBytes{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* AI Roadmap Theme - Futuristic and Modern */
+    :root {
+        --ai-primary: #00d4ff;
+        --ai-secondary: #ff6b6b;
+        --ai-accent: #4ecdc4;
+        --ai-warning: #ffd93d;
+        --ai-success: #6bcf7f;
+        --ai-dark-bg: #0a0e1a;
+        --ai-dark-card: #1a1f2e;
+        --ai-light-bg: #f8fafc;
+        --ai-light-card: #ffffff;
+        --ai-text-primary-dark: #e2e8f0;
+        --ai-text-secondary-dark: #94a3b8;
+        --ai-text-primary-light: #1e293b;
+        --ai-text-secondary-light: #64748b;
+        --ai-gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --ai-gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        --ai-gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        --ai-gradient-cyber: linear-gradient(135deg, #00d4ff 0%, #4ecdc4 100%);
+        --ai-gradient-neon: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 100%);
+    }
+
+    body.dark-mode {
+        --ai-primary: #00d4ff;
+        --ai-secondary: #ff6b6b;
+        --ai-accent: #4ecdc4;
+        --ai-warning: #ffd93d;
+        --ai-success: #6bcf7f;
+        --ai-dark-bg: #0a0e1a;
+        --ai-dark-card: #1a1f2e;
+        --ai-light-bg: #0a0e1a;
+        --ai-light-card: #1a1f2e;
+        --ai-text-primary-dark: #e2e8f0;
+        --ai-text-secondary-dark: #94a3b8;
+        --ai-text-primary-light: #e2e8f0;
+        --ai-text-secondary-light: #94a3b8;
+        --ai-gradient-1: linear-gradient(135deg, #00d4ff 0%, #4ecdc4 100%);
+        --ai-gradient-2: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 100%);
+        --ai-gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        transition: all 0.3s ease;
+        background: var(--ai-light-bg);
+        color: var(--ai-text-primary-light);
+        position: relative;
+    }
+
+    body.dark-mode {
+        background: var(--ai-dark-bg);
+        color: var(--ai-text-primary-dark);
+    }
+
+    /* AI Background Pattern */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+            radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(78, 205, 196, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, rgba(255, 107, 107, 0.05) 0%, transparent 50%);
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    .roadmap-hero {
+        background: var(--ai-gradient-cyber);
+        color: white;
+        padding: 4rem 0;
+        text-align: center;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .roadmap-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .roadmap-hero h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .roadmap-hero p {
+        font-size: 1.2rem;
+        opacity: 0.95;
+        max-width: 600px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+    }
+
+    .roadmap-container {
+        padding: 2rem 0;
+    }
+
+    .roadmap-card {
+        background: var(--ai-light-card);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(0, 212, 255, 0.2);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .roadmap-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--ai-gradient-cyber);
+    }
+
+    .dark-mode .roadmap-card {
+        background: var(--ai-dark-card);
+        color: var(--ai-text-primary-dark);
+        border-color: rgba(0, 212, 255, 0.3);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .customization-form {
+        background: var(--ai-light-bg);
+        border-radius: 16px;
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(0, 212, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .customization-form::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--ai-gradient-neon);
+    }
+
+    .dark-mode .customization-form {
+        background: var(--ai-dark-bg);
+        border-color: rgba(0, 212, 255, 0.3);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--ai-text-primary-light);
+        font-size: 1.1rem;
+    }
+
+    .dark-mode .form-label {
+        color: var(--ai-text-primary-dark);
+    }
+
+    .form-control, .form-select {
+        border: 2px solid rgba(0, 212, 255, 0.2);
+        border-radius: 12px;
+        padding: 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: var(--ai-light-card);
+        color: var(--ai-text-primary-light);
+    }
+
+    .dark-mode .form-control, .dark-mode .form-select {
+        background: var(--ai-dark-card);
+        border-color: rgba(0, 212, 255, 0.3);
+        color: var(--ai-text-primary-dark);
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--ai-primary);
+        box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .btn-generate {
+        background: var(--ai-gradient-cyber);
+        border: none;
+        color: white;
+        padding: 1.2rem 2.5rem;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-generate::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .btn-generate:hover::before {
+        left: 100%;
+    }
+
+    .btn-generate:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(0, 212, 255, 0.4);
+    }
+
+    .roadmap-preview {
+        display: none;
+        animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .roadmap-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding: 2.5rem;
+        background: var(--ai-gradient-neon);
+        border-radius: 20px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .roadmap-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .roadmap-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: var(--ai-light-card);
+        border-radius: 16px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 212, 255, 0.2);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--ai-gradient-cyber);
+    }
+
+    .dark-mode .stat-card {
+        background: var(--ai-dark-card);
+        border-color: rgba(0, 212, 255, 0.3);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+    }
+
+    .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--ai-primary);
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--ai-text-primary-light);
+        margin-bottom: 0.25rem;
+    }
+
+    .dark-mode .stat-value {
+        color: var(--ai-text-primary-dark);
+    }
+
+    .stat-label {
+        color: var(--ai-text-secondary-light);
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .dark-mode .stat-label {
+        color: var(--ai-text-secondary-dark);
+    }
+
+    .phase-card {
+        background: var(--ai-light-card);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid var(--ai-primary);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 212, 255, 0.2);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .phase-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--ai-gradient-cyber);
+    }
+
+    .dark-mode .phase-card {
+        background: var(--ai-dark-card);
+        border-color: rgba(0, 212, 255, 0.3);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .phase-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+    }
+
+    .phase-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .phase-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--ai-text-primary-light);
+        margin: 0;
+    }
+
+    .dark-mode .phase-title {
+        color: var(--ai-text-primary-dark);
+    }
+
+    .phase-duration {
+        background: var(--ai-gradient-cyber);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .topics-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+
+    .topic-item {
+        background: var(--ai-light-bg);
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid rgba(0, 212, 255, 0.2);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .topic-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--ai-gradient-neon);
+    }
+
+    .dark-mode .topic-item {
+        background: var(--ai-dark-bg);
+        border-color: rgba(0, 212, 255, 0.3);
+    }
+
+    .topic-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0, 212, 255, 0.2);
+    }
+
+    .topic-title {
+        font-weight: 700;
+        color: var(--ai-text-primary-light);
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+    }
+
+    .dark-mode .topic-title {
+        color: var(--ai-text-primary-dark);
+    }
+
+    .topic-hours {
+        color: var(--ai-primary);
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .dark-mode .topic-hours {
+        color: var(--ai-primary);
+    }
+
+    .reference-section {
+        background: var(--ai-light-bg);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-top: 2rem;
+        border: 1px solid rgba(0, 212, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .reference-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--ai-gradient-cyber);
+    }
+
+    .dark-mode .reference-section {
+        background: var(--ai-dark-bg);
+        border-color: rgba(0, 212, 255, 0.3);
+    }
+
+    .reference-title {
+        font-weight: 700;
+        color: var(--ai-primary);
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .dark-mode .reference-title {
+        color: var(--ai-primary);
+    }
+
+    .areas-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .area-tag {
+        background: var(--ai-gradient-cyber);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .loading-spinner {
+        display: none;
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .spinner {
+        border: 4px solid rgba(0, 212, 255, 0.2);
+        border-top: 4px solid var(--ai-primary);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+        box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+    }
+
+    .dark-mode .spinner {
+        border-color: rgba(0, 212, 255, 0.3);
+        box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* AI Glow Effects */
+    .ai-glow {
+        box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+    }
+
+    .ai-glow:hover {
+        box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/roadmap.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="roadmap-hero">
+    <div class="container">
+        <h1>Your Personalized Learning Roadmap</h1>
+        <p>Let's create a customized learning path tailored to your career goals and preferences</p>
+    </div>
+</div>
+
+<div class="container roadmap-container">
+    <!-- Goal Confirmation -->
+    <div class="roadmap-card">
+        <h2 class="text-center mb-4">🎯 Your Career Goal</h2>
+        <div class="text-center">
+            <div class="goal-display">
+                <h3>{{ user_preferences.specialization }} Developer</h3>
+                <p class="text-muted">Target Company: {{ user_preferences.target_company }}</p>
+                <p class="text-muted">Desired Position: {{ user_preferences.position }}</p>
+            </div>
+            <p class="mt-3">Perfect! Now let's customize your learning journey based on your current level and time commitment.</p>
+        </div>
+    </div>
+
+    <!-- Roadmap Customization -->
+    <div class="roadmap-card">
+        <h2 class="text-center mb-4">⚙️ Customize Your Roadmap</h2>
+        <form id="roadmapForm" class="customization-form">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="skillLevel" class="form-label">Current Skill Level</label>
+                        <select class="form-select" id="skillLevel" name="skill_level" required>
+                            <option value="">Select your level</option>
+                            <option value="Beginner">Beginner (0-1 years)</option>
+                            <option value="Intermediate">Intermediate (1-3 years)</option>
+                            <option value="Advanced">Advanced (3-5 years)</option>
+                            <option value="Expert">Expert (5+ years)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="duration" class="form-label">Learning Duration</label>
+                        <select class="form-select" id="duration" name="duration" required>
+                            <option value="">Select duration</option>
+                            <option value="4">4 weeks (Intensive)</option>
+                            <option value="8">8 weeks (Standard)</option>
+                            <option value="12">12 weeks (Comprehensive)</option>
+                            <option value="16">16 weeks (Thorough)</option>
+                            <option value="20">20 weeks (Complete)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="focusArea" class="form-label">Focus Area</label>
+                        <select class="form-select" id="focusArea" name="focus_area" required>
+                            <option value="">Select focus</option>
+                            <option value="fundamentals">Fundamentals & Basics</option>
+                            <option value="practical">Practical Applications</option>
+                            <option value="advanced">Advanced Concepts</option>
+                            <option value="projects">Project-Based Learning</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="learningGoals" class="form-label">Specific Learning Goals (Optional)</label>
+                <textarea class="form-control" id="learningGoals" name="learning_goals" rows="3" 
+                          placeholder="e.g., I want to learn React for frontend development, understand machine learning algorithms, build a portfolio project..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-generate">
+                <i class="fas fa-magic me-2"></i>
+                Generate My Personalized Roadmap
+            </button>
+        </form>
+
+        <!-- Loading Spinner -->
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner"></div>
+            <p>Creating your personalized roadmap...</p>
+        </div>
+    </div>
+
+    <!-- Generated Roadmap -->
+    <div class="roadmap-preview" id="roadmapPreview">
+        <div class="roadmap-header">
+            <h2>🚀 Your Personalized {{ user_preferences.specialization }} Roadmap</h2>
+            <p id="roadmapSummary">Ready to start your learning journey!</p>
+        </div>
+
+        <!-- Roadmap Stats -->
+        <div class="roadmap-stats" id="roadmapStats">
+            <!-- Stats will be populated by JavaScript -->
+        </div>
+
+        <!-- Learning Phases -->
+        <div class="roadmap-timeline" id="roadmapPhases">
+            <!-- Phases will be populated by JavaScript -->
+        </div>
+
+        <!-- Reference Section -->
+        <div class="reference-section" id="referenceSection">
+            <!-- Reference will be populated by JavaScript -->
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="text-center mt-4">
+            <button class="btn btn-success me-3" onclick="acceptRoadmap()" id="acceptBtn">
+                <i class="fas fa-check me-2"></i>
+                Accept This Roadmap
+            </button>
+            <button class="btn btn-outline-primary me-3" onclick="regenerateRoadmap()">
+                <i class="fas fa-sync-alt me-2"></i>
+                Regenerate
+            </button>
+            <button class="btn btn-outline-secondary" onclick="saveRoadmap()">
+                <i class="fas fa-save me-2"></i>
+                Save Draft
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('roadmapForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    // Show loading spinner
+    document.getElementById('loadingSpinner').style.display = 'block';
+    document.getElementById('roadmapPreview').style.display = 'none';
+    
+    // Make AJAX call to generate roadmap
+    fetch('/generate-roadmap', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            displayRoadmap(data.roadmap);
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while generating your roadmap.');
+    })
+    .finally(() => {
+        document.getElementById('loadingSpinner').style.display = 'none';
+    });
+});
+
+function displayRoadmap(roadmap) {
+    // Store current roadmap
+    currentRoadmap = roadmap;
+    
+    // Update roadmap summary
+    const summary = `${roadmap.user_info.skill_level} level ${roadmap.timeline.total_weeks}-week roadmap for ${roadmap.user_info.specialization}`;
+    document.getElementById('roadmapSummary').textContent = summary;
+    
+    // Generate stats
+    generateStats(roadmap);
+    
+    // Generate phases
+    generatePhases(roadmap);
+    
+    // Generate reference
+    generateReference(roadmap);
+    
+    // Show roadmap
+    document.getElementById('roadmapPreview').style.display = 'block';
+    document.getElementById('roadmapPreview').scrollIntoView({ behavior: 'smooth' });
+}
+
+function generateStats(roadmap) {
+    const statsContainer = document.getElementById('roadmapStats');
+    const weeks = roadmap.timeline.total_weeks;
+    const totalTopics = roadmap.progress.total_topics;
+    const totalHours = roadmap.phases.reduce((total, phase) => {
+        return total + phase.topics.reduce((phaseTotal, topic) => phaseTotal + topic.estimated_hours, 0);
+    }, 0);
+    
+    statsContainer.innerHTML = `
+        <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-value">${weeks}</div>
+            <div class="stat-label">Weeks</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-value">${totalTopics}</div>
+            <div class="stat-label">Topics</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">⏱️</div>
+            <div class="stat-value">${totalHours}h</div>
+            <div class="stat-label">Total Hours</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🎯</div>
+            <div class="stat-value">${roadmap.user_info.skill_level}</div>
+            <div class="stat-label">Level</div>
+        </div>
+    `;
+}
+
+function generatePhases(roadmap) {
+    const phasesContainer = document.getElementById('roadmapPhases');
+    
+    let phasesHTML = '';
+    
+    roadmap.phases.forEach((phase, index) => {
+        const phaseIcon = index === 0 ? '📚' : index === 1 ? '⚡' : index === 2 ? '🚀' : '🎯';
+        
+        phasesHTML += `
+            <div class="roadmap-phase" style="animation-delay: ${index * 0.2}s">
+                <div class="phase-connector"></div>
+                <div class="phase-content">
+                    <div class="phase-header">
+                        <h3 class="phase-title">
+                            <div class="phase-icon">${phaseIcon}</div>
+                            ${phase.name}
+                        </h3>
+                        <span class="phase-duration">Weeks ${phase.start_week}-${phase.end_week}</span>
+                    </div>
+                    
+                    <div class="phase-description">
+                        Master the ${phase.name.toLowerCase()} concepts and build a strong foundation for your learning journey.
+                    </div>
+
+                    <div class="topics-grid">
+                        ${phase.topics.map(topic => `
+                            <div class="topic-card" onclick="toggleTopicDetails('${topic.id}')">
+                                <div class="topic-title">${topic.title}</div>
+                                <div class="topic-meta">
+                                    <span class="topic-hours">${topic.estimated_hours}h</span>
+                                    <span class="topic-status ${topic.status}">${topic.status}</span>
+                                </div>
+                                
+                                <!-- Topic Details (Hidden by default) -->
+                                <div class="topic-details" id="details-${topic.id}" style="display: none;">
+                                    <div class="mt-3">
+                                        <h6>Resources:</h6>
+                                        <ul class="list-unstyled">
+                                            ${topic.resources ? topic.resources.map(resource => `
+                                                <li class="mb-1">
+                                                    <i class="fas fa-${resource.type === 'Book' ? 'book' : resource.type === 'Course' ? 'play-circle' : resource.type === 'Practice' ? 'code' : 'file-alt'} me-2"></i>
+                                                    ${resource.name} - ${resource.platform}
+                                                </li>
+                                            `).join('') : ''}
+                                        </ul>
+                                        
+                                        <h6 class="mt-3">Milestones:</h6>
+                                        <ul class="list-unstyled">
+                                            ${topic.milestones ? topic.milestones.map(milestone => `
+                                                <li class="mb-1">
+                                                    <i class="fas fa-check-circle me-2 text-success"></i>
+                                                    ${milestone}
+                                                </li>
+                                            `).join('') : ''}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    phasesContainer.innerHTML = phasesHTML;
+    
+    // Add intersection observer for animations
+    const phases = phasesContainer.querySelectorAll('.roadmap-phase');
+    phases.forEach(phase => {
+        observer.observe(phase);
+    });
+}
+
+function generateReference(roadmap) {
+    const referenceContainer = document.getElementById('referenceSection');
+    const reference = roadmap.reference;
+    
+    referenceContainer.innerHTML = `
+        <h4 class="reference-title">📖 Reference: ${reference.description}</h4>
+        <p>This roadmap is based on industry best practices and references from ${reference.source}</p>
+        <div class="areas-tags">
+            ${reference.key_areas.map(area => `<span class="area-tag">${area}</span>`).join('')}
+        </div>
+        <div class="mt-3">
+            <a href="${reference.url}" target="_blank" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-external-link-alt me-1"></i>
+                View on roadmap.sh
+            </a>
+        </div>
+    `;
+}
+
+let currentRoadmap = null;
+
+function saveRoadmap() {
+    if (!currentRoadmap) {
+        alert('No roadmap to save. Please generate a roadmap first.');
+        return;
+    }
+    
+    // Save as draft
+    fetch('/save-roadmap-draft', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ roadmap: currentRoadmap, status: 'draft' })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Roadmap saved as draft successfully!');
+        } else {
+            alert('Error saving roadmap: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while saving the roadmap.');
+    });
+}
+
+function acceptRoadmap() {
+    if (!currentRoadmap) {
+        alert('No roadmap to accept. Please generate a roadmap first.');
+        return;
+    }
+    
+    // Show confirmation dialog
+    if (confirm('Are you sure you want to accept this roadmap? This will become your active learning path and update your dashboard.')) {
+        // Accept the roadmap
+        fetch('/accept-roadmap', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ roadmap: currentRoadmap, status: 'accepted' })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Roadmap accepted successfully! Redirecting to dashboard...');
+                // Redirect to dashboard after a short delay
+                setTimeout(() => {
+                    window.location.href = '/dashboard';
+                }, 1500);
+            } else {
+                alert('Error accepting roadmap: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while accepting the roadmap.');
+        });
+    }
+}
+
+function regenerateRoadmap() {
+    document.getElementById('roadmapPreview').style.display = 'none';
+    document.getElementById('roadmapForm').scrollIntoView({ behavior: 'smooth' });
+    currentRoadmap = null;
+}
+
+// Toggle topic details
+function toggleTopicDetails(topicId) {
+    const details = document.getElementById('details-' + topicId);
+    if (details.style.display === 'none') {
+        details.style.display = 'block';
+    } else {
+        details.style.display = 'none';
+    }
+}
+
+// Intersection Observer for animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateX(0)';
+        }
+    });
+}, observerOptions);
+
+// AI Roadmap specific functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Add AI glow effects to interactive elements
+    const interactiveElements = document.querySelectorAll('.btn-generate, .stat-card, .phase-card, .topic-card');
+    interactiveElements.forEach(element => {
+        element.addEventListener('mouseenter', function() {
+            this.classList.add('ai-glow');
+        });
+        element.addEventListener('mouseleave', function() {
+            this.classList.remove('ai-glow');
+        });
+    });
+    
+    // Add hover effects to topic cards
+    const topicCards = document.querySelectorAll('.topic-card');
+    topicCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+        });
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+});
+</script>
+{% endblock %}
